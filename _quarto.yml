@@ -2,7 +2,7 @@ project:
   type: book
 
 book:
-  title: "Hurtownie danych oraz analityczne metody przetwarzania"
+  title: "Hurtownie danych i analityczne metody przetwarzania"
   author: "Łukasz Wawrowski"
   date: ""
   chapters:
@@ -11,6 +11,7 @@ book:
     
 format:
   html:
+    toc-title: "Spis treści"
     theme:
       - cosmo
       - brand

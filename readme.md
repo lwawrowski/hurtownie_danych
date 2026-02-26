@@ -1,7 +1,5 @@
 Wykłady
 
-- korzystanie z Azure?
-
 https://www.oracle.com/pl/database/what-is-a-data-warehouse/
 https://github.com/sqlalchemy/alembic
 https://github.com/sqlalchemy/sqlalchemy
