@@ -1,0 +1,16 @@
+project:
+  type: book
+
+book:
+  title: "Hurtownie danych oraz analityczne metody przetwarzania"
+  author: "Łukasz Wawrowski"
+  date: ""
+  chapters:
+    - index.qmd
+    - 00-organizacja.qmd
+    
+format:
+  html:
+    theme:
+      - cosmo
+      - brand

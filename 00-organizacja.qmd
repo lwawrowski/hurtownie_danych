@@ -1,0 +1,75 @@
+# Organizacja
+
+## Wykład
+
+| Nr | Zakres          | Temat                                               |
+|----|-----------------|-----------------------------------------------------|
+| 1  | Data storage    | RDBMS: Oracle, Sql Server, Postgres                 |
+| 2  | Data storage    | NoSQL: MongoDB, Cassandra, Redis, Elastic           |
+| 3  | Data storage    | DWH: Google BigQuery, Amazon Redshift, Snowflake    |
+| 4  | File storage    | Data Lake: Amazon S3, GCS, Azure Data Lake          |
+| 5  | Data ingestion  | CDC: Debezium, Fivetran                             |
+| 6  | Data ingestion  | ETL: Airbyte, Apache Spark - pyspark                |
+| 7  | Data pipelines  | SQL, Python (pandas), Spark, R                      |
+| 8  | Data serving    | REST API, GraphQL, gRPC, WebSockets, MQTT           |
+| 9  | Data analysis   | Looker, Power BI, Tableau, shiny, dash, streamlit   |
+| 10 | Orchestration   | Weights & Biases, MLFlow, clearML, Prefect          |
+| 11 | Data management | Data Catalog: Collibra, Alation, Amundsen           |
+| 12 | Data management | Data Lineage: OpenLineage, DataHub                  |
+| 13 | Data management | Data Quality: Great Expectations, Soda, Monte Carlo |
+
+## Laboratorium
+
+| Nr | Temat                               | Narzędzia               |
+|----|-------------------------------------|-------------------------|
+| 1  | Organizacja                         |                         |
+| 2  | EDA                                 | python                  |
+| 3  | Data cleaning + feature engineering | python                  |
+| 4  | Baza danych                         | postgreSQL, sql, docker |
+| 5  | Orkiestracja ETL                    | Prefect                 |
+| 6  | Model predykcyjny                   | python                  |
+| 7  | Eksperymenty                        | MLFlow                  |
+| 8  | Wersjonowanie danych                | DVC                     |
+| 9  | Serwowanie modelu przez API         | FastAPI, docker         |
+| 10 | Dashboard                           | PowerBI, Streamlit      |
+| 11 | Monitoring modelu                   | Evidently AI            |
+| 12 | CI/CD                               | GitHub actions          |
+| 13 | Konsultacje                         |                         |
+| 14 | Prezentacje projektów               |                         |
+| 15 | Prezentacje projektów               |                         |
+
+### Zaliczenie
+
+Przygotowanie projektu zespołowego z zakresu hurtowni danych oraz metod analitycznych. Celem projektu jest zaprojektowanie i implementacja kompletnego systemu analitycznego obejmującego wybrane elementy:
+
+- pozyskanie i przetwarzanie danych,
+
+- przechowywanie danych w relacyjnej bazie danych,
+
+- budowę modelu predykcyjnego (opcjonalnie),
+
+- udostępnienie wyników przez dashboard i/lub API,
+
+- elementy MLOps (opcjonalnie).
+
+Każdy projekt musi zawierać:
+
+- publiczne repozytorium Git,
+
+- czytelną strukturę katalogów,
+
+- plik README z opisem problemu biznesowego, architektury rozwiązania i sposobu uruchomienia,
+
+- udokumentowane źródło danych,
+
+- możliwość odtworzenia projektu na czystym środowisku.
+
+Ocena końcowa:
+
+| Ocena | Zakres                                                                                                                                                          |
+|-------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| dst   | Projekt zawiera bazę danych oraz dashboard analityczny oparty na przetworzonych danych.                                                                         |
+| dst+  | Projekt zawiera bazę danych, zautomatyzowany pipeline ETL oraz dashboard.                                                                                       |
+| db    | Projekt zawiera bazę danych, pipeline ETL, model predykcyjny z ewaluacją oraz dashboard.                                                                        |
+| db+   | Projekt zawiera bazę danych, pipeline ETL, model wersjonowany (MLflow/DVC), API serwujące model oraz dashboard.                                                 |
+| bdb   | Projekt stanowi kompletny system ML z bazą danych, pipeline ETL, wersjonowaniem, API, monitoringiem modelu oraz elementem automatyzacji (CI/CD lub retraining). |
