@@ -1,0 +1,64 @@
+# Explanatory Data Analysis
+
+Ze strony [TLC Trip Record Data](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page) pobieramy dane dla *Yellow Taxi Trip Records* dla stycznia 2025. Opis poszczególnych kolumn w tym zbiorze znajduje się w pliku [Data dictionary](https://www.nyc.gov/assets/tlc/downloads/pdf/data_dictionary_trip_records_yellow.pdf). Na tej stronie internetowej znajduje się też wiele innych zbiorów, które mogą być przydatne w analizie.
+
+## Podstawowe pytania
+
+1. Ile jest rekordów?
+2. Ile jest zmiennych numerycznych?
+3. Ile jest zmiennych kategorycznych?
+4. Czy istnieją jeszcze inne typy danych?
+
+## Braki danych
+
+1. W których kolumnach występują braki danych?
+2. Czy braki danych współwystępują w tych samych wierszach?
+3. Czy braki danych są losowe czy systematyczne?
+
+## Rozkłady danych
+
+1. Jak wygląda rozkład przebytego dystansu?
+2. Jak wygląda rozkład opłaty?
+3. Jak wygląda rozkład liczby pasażerów?
+
+## Czas
+
+1. Jakie są najpopularniejsze godziny?
+2. Jakie są najpopularniejsze dni tygodnia?
+3. Jak wygląda rozkład czasu podróży?
+
+## Jakość danych - outliery oraz niespójności
+
+1. Czy istnieją przejazdy o bardzo dużej odległości?
+2. Czy istnieją przejazdy o bardzo dużej cenie?
+3. Czy istnieją przejazdy o bardzo krótkim czasie ale dużej odległości?
+4. Czy istnieją przejazdy gdzie `trip_distance = 0` ale `fare_amount > 0`?
+5. Czy istnieją przejazdy gdzie `dropoff < pickup`?
+6. Czy istnieją przejazdy gdzie czas podróży jest bardzo długi ale dystans mały?
+7. Czy `total_amount` = suma pozostałych kolumn kosztowych?
+
+## Korelacja i dynamika czasowa
+
+1. Czy istnieje korelacja pomiędzy jakimiś zmiennymi numerycznymi?
+2. Czy średnia długość przejazdu zmienia się w ciągu dnia?
+3. Czy średnia cena zmienia się w ciągu dnia?
+4. Czy więcej pasażerów jeździ w weekendy?
+
+## Analityka
+
+1. Czy można wykryć sytuacje, w których taxi stało w korku?
+2. Jakie są najczęstsze trasy?
+3. Czy istnieje zależność między ceną a trasą?
+4. Czy napiwki zależą od dystansu/godziny/liczby pasażerów?
+5. Czy kierowcy różnych firm się różnią?
+
+## Modele ML
+
+1. Jaka cecha może być atrybutem decyzyjnym w modelu regresji?
+2. Jaka cecha może być atrybutem decyzyjnym w modelu klasyfikacji?
+
+
+
+
+
+
