@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>1&nbsp; Organizacja – Hurtownie danych i analityczne metody przetwarzania</title>
+<title>2&nbsp; Explanatory Data Analysis – Hurtownie danych i analityczne metody przetwarzania</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,8 +30,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./01-eda.html" rel="next">
-<link href="./index.html" rel="prev">
+<link href="./00-organizacja.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -81,7 +80,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./00-organizacja.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Organizacja</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-eda.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Explanatory Data Analysis</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -114,13 +113,13 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./00-organizacja.html" class="sidebar-item-text sidebar-link active">
+  <a href="./00-organizacja.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Organizacja</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./01-eda.html" class="sidebar-item-text sidebar-link">
+  <a href="./01-eda.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Explanatory Data Analysis</span></span></a>
   </div>
 </li>
@@ -134,11 +133,14 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Spis treści</h2>
    
   <ul>
-  <li><a href="#wykład" id="toc-wykład" class="nav-link active" data-scroll-target="#wykład"><span class="header-section-number">1.1</span> Wykład</a></li>
-  <li><a href="#laboratorium" id="toc-laboratorium" class="nav-link" data-scroll-target="#laboratorium"><span class="header-section-number">1.2</span> Laboratorium</a>
-  <ul class="collapse">
-  <li><a href="#zaliczenie" id="toc-zaliczenie" class="nav-link" data-scroll-target="#zaliczenie"><span class="header-section-number">1.2.1</span> Zaliczenie</a></li>
-  </ul></li>
+  <li><a href="#podstawowe-pytania" id="toc-podstawowe-pytania" class="nav-link active" data-scroll-target="#podstawowe-pytania"><span class="header-section-number">2.1</span> Podstawowe pytania</a></li>
+  <li><a href="#braki-danych" id="toc-braki-danych" class="nav-link" data-scroll-target="#braki-danych"><span class="header-section-number">2.2</span> Braki danych</a></li>
+  <li><a href="#rozkłady-danych" id="toc-rozkłady-danych" class="nav-link" data-scroll-target="#rozkłady-danych"><span class="header-section-number">2.3</span> Rozkłady danych</a></li>
+  <li><a href="#czas" id="toc-czas" class="nav-link" data-scroll-target="#czas"><span class="header-section-number">2.4</span> Czas</a></li>
+  <li><a href="#jakość-danych---outliery-oraz-niespójności" id="toc-jakość-danych---outliery-oraz-niespójności" class="nav-link" data-scroll-target="#jakość-danych---outliery-oraz-niespójności"><span class="header-section-number">2.5</span> Jakość danych - outliery oraz niespójności</a></li>
+  <li><a href="#korelacja-i-dynamika-czasowa" id="toc-korelacja-i-dynamika-czasowa" class="nav-link" data-scroll-target="#korelacja-i-dynamika-czasowa"><span class="header-section-number">2.6</span> Korelacja i dynamika czasowa</a></li>
+  <li><a href="#analityka" id="toc-analityka" class="nav-link" data-scroll-target="#analityka"><span class="header-section-number">2.7</span> Analityka</a></li>
+  <li><a href="#modele-ml" id="toc-modele-ml" class="nav-link" data-scroll-target="#modele-ml"><span class="header-section-number">2.8</span> Modele ML</a></li>
   </ul>
 </nav>
     </div>
@@ -147,7 +149,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Organizacja</span></h1>
+<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Explanatory Data Analysis</span></h1>
 </div>
 
 
@@ -164,234 +166,79 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="wykład" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="wykład"><span class="header-section-number">1.1</span> Wykład</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 5%">
-<col style="width: 22%">
-<col style="width: 71%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Nr</th>
-<th>Zakres</th>
-<th>Temat</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>1</td>
-<td>Data storage</td>
-<td>RDBMS: Oracle, Sql Server, Postgres</td>
-</tr>
-<tr class="even">
-<td>2</td>
-<td>Data storage</td>
-<td>NoSQL: MongoDB, Cassandra, Redis, Elastic</td>
-</tr>
-<tr class="odd">
-<td>3</td>
-<td>Data storage</td>
-<td>DWH: Google BigQuery, Amazon Redshift, Snowflake</td>
-</tr>
-<tr class="even">
-<td>4</td>
-<td>File storage</td>
-<td>Data Lake: Amazon S3, GCS, Azure Data Lake</td>
-</tr>
-<tr class="odd">
-<td>5</td>
-<td>Data ingestion</td>
-<td>CDC: Debezium, Fivetran</td>
-</tr>
-<tr class="even">
-<td>6</td>
-<td>Data ingestion</td>
-<td>ETL: Airbyte, Apache Spark - pyspark</td>
-</tr>
-<tr class="odd">
-<td>7</td>
-<td>Data pipelines</td>
-<td>SQL, Python (pandas), Spark, R</td>
-</tr>
-<tr class="even">
-<td>8</td>
-<td>Data serving</td>
-<td>REST API, GraphQL, gRPC, WebSockets, MQTT</td>
-</tr>
-<tr class="odd">
-<td>9</td>
-<td>Data analysis</td>
-<td>Looker, Power BI, Tableau, shiny, dash, streamlit</td>
-</tr>
-<tr class="even">
-<td>10</td>
-<td>Orchestration</td>
-<td>Weights &amp; Biases, MLFlow, clearML, Prefect</td>
-</tr>
-<tr class="odd">
-<td>11</td>
-<td>Data management</td>
-<td>Data Catalog: Collibra, Alation, Amundsen</td>
-</tr>
-<tr class="even">
-<td>12</td>
-<td>Data management</td>
-<td>Data Lineage: OpenLineage, DataHub</td>
-</tr>
-<tr class="odd">
-<td>13</td>
-<td>Data management</td>
-<td>Data Quality: Great Expectations, Soda, Monte Carlo</td>
-</tr>
-</tbody>
-</table>
+<p>Ze strony <a href="https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page">TLC Trip Record Data</a> pobieramy dane dla <em>Yellow Taxi Trip Records</em> dla stycznia 2025. Opis poszczególnych kolumn w tym zbiorze znajduje się w pliku <a href="https://www.nyc.gov/assets/tlc/downloads/pdf/data_dictionary_trip_records_yellow.pdf">Data dictionary</a>. Na tej stronie internetowej znajduje się też wiele innych zbiorów, które mogą być przydatne w analizie.</p>
+<section id="podstawowe-pytania" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="podstawowe-pytania"><span class="header-section-number">2.1</span> Podstawowe pytania</h2>
+<ol type="1">
+<li>Ile jest rekordów?</li>
+<li>Ile jest zmiennych numerycznych?</li>
+<li>Ile jest zmiennych kategorycznych?</li>
+<li>Czy istnieją jeszcze inne typy danych?</li>
+</ol>
 </section>
-<section id="laboratorium" class="level2" data-number="1.2">
-<h2 data-number="1.2" class="anchored" data-anchor-id="laboratorium"><span class="header-section-number">1.2</span> Laboratorium</h2>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Nr</th>
-<th>Temat</th>
-<th>Narzędzia</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>1</td>
-<td>Organizacja</td>
-<td></td>
-</tr>
-<tr class="even">
-<td>2</td>
-<td>EDA</td>
-<td>python</td>
-</tr>
-<tr class="odd">
-<td>3</td>
-<td>Data cleaning + feature engineering</td>
-<td>python</td>
-</tr>
-<tr class="even">
-<td>4</td>
-<td>Baza danych</td>
-<td>postgreSQL, sql, docker</td>
-</tr>
-<tr class="odd">
-<td>5</td>
-<td>Orkiestracja ETL</td>
-<td>Prefect</td>
-</tr>
-<tr class="even">
-<td>6</td>
-<td>Model predykcyjny</td>
-<td>python</td>
-</tr>
-<tr class="odd">
-<td>7</td>
-<td>Eksperymenty</td>
-<td>MLFlow</td>
-</tr>
-<tr class="even">
-<td>8</td>
-<td>Wersjonowanie danych</td>
-<td>DVC</td>
-</tr>
-<tr class="odd">
-<td>9</td>
-<td>Serwowanie modelu przez API</td>
-<td>FastAPI, docker</td>
-</tr>
-<tr class="even">
-<td>10</td>
-<td>Dashboard</td>
-<td>PowerBI, Streamlit</td>
-</tr>
-<tr class="odd">
-<td>11</td>
-<td>Monitoring modelu</td>
-<td>Evidently AI</td>
-</tr>
-<tr class="even">
-<td>12</td>
-<td>CI/CD</td>
-<td>GitHub actions</td>
-</tr>
-<tr class="odd">
-<td>13</td>
-<td>Konsultacje</td>
-<td></td>
-</tr>
-<tr class="even">
-<td>14</td>
-<td>Prezentacje projektów</td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>15</td>
-<td>Prezentacje projektów</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<section id="zaliczenie" class="level3" data-number="1.2.1">
-<h3 data-number="1.2.1" class="anchored" data-anchor-id="zaliczenie"><span class="header-section-number">1.2.1</span> Zaliczenie</h3>
-<p>Przygotowanie projektu zespołowego z zakresu hurtowni danych oraz metod analitycznych. Celem projektu jest zaprojektowanie i implementacja kompletnego systemu analitycznego obejmującego wybrane elementy:</p>
-<ul>
-<li><p>pozyskanie i przetwarzanie danych,</p></li>
-<li><p>przechowywanie danych w relacyjnej bazie danych,</p></li>
-<li><p>budowę modelu predykcyjnego (opcjonalnie),</p></li>
-<li><p>udostępnienie wyników przez dashboard i/lub API,</p></li>
-<li><p>elementy MLOps (opcjonalnie).</p></li>
-</ul>
-<p>Każdy projekt musi zawierać:</p>
-<ul>
-<li><p>publiczne repozytorium Git,</p></li>
-<li><p>czytelną strukturę katalogów,</p></li>
-<li><p>plik README z opisem problemu biznesowego, architektury rozwiązania i sposobu uruchomienia,</p></li>
-<li><p>udokumentowane źródło danych,</p></li>
-<li><p>możliwość odtworzenia projektu na czystym środowisku.</p></li>
-</ul>
-<p>Ocena końcowa:</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 4%">
-<col style="width: 95%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Ocena</th>
-<th>Zakres</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>dst</td>
-<td>Projekt zawiera bazę danych oraz dashboard analityczny oparty na przetworzonych danych.</td>
-</tr>
-<tr class="even">
-<td>dst+</td>
-<td>Projekt zawiera bazę danych, zautomatyzowany pipeline ETL oraz dashboard.</td>
-</tr>
-<tr class="odd">
-<td>db</td>
-<td>Projekt zawiera bazę danych, pipeline ETL, model predykcyjny z ewaluacją oraz dashboard.</td>
-</tr>
-<tr class="even">
-<td>db+</td>
-<td>Projekt zawiera bazę danych, pipeline ETL, model wersjonowany (MLflow/DVC), API serwujące model oraz dashboard.</td>
-</tr>
-<tr class="odd">
-<td>bdb</td>
-<td>Projekt stanowi kompletny system ML z bazą danych, pipeline ETL, wersjonowaniem, API, monitoringiem modelu oraz elementem automatyzacji (CI/CD lub retraining).</td>
-</tr>
-</tbody>
-</table>
+<section id="braki-danych" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="braki-danych"><span class="header-section-number">2.2</span> Braki danych</h2>
+<ol type="1">
+<li>W których kolumnach występują braki danych?</li>
+<li>Czy braki danych współwystępują w tych samych wierszach?</li>
+<li>Czy braki danych są losowe czy systematyczne?</li>
+</ol>
+</section>
+<section id="rozkłady-danych" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="rozkłady-danych"><span class="header-section-number">2.3</span> Rozkłady danych</h2>
+<ol type="1">
+<li>Jak wygląda rozkład przebytego dystansu?</li>
+<li>Jak wygląda rozkład opłaty?</li>
+<li>Jak wygląda rozkład liczby pasażerów?</li>
+</ol>
+</section>
+<section id="czas" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="czas"><span class="header-section-number">2.4</span> Czas</h2>
+<ol type="1">
+<li>Jakie są najpopularniejsze godziny?</li>
+<li>Jakie są najpopularniejsze dni tygodnia?</li>
+<li>Jak wygląda rozkład czasu podróży?</li>
+</ol>
+</section>
+<section id="jakość-danych---outliery-oraz-niespójności" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="jakość-danych---outliery-oraz-niespójności"><span class="header-section-number">2.5</span> Jakość danych - outliery oraz niespójności</h2>
+<ol type="1">
+<li>Czy istnieją przejazdy o bardzo dużej odległości?</li>
+<li>Czy istnieją przejazdy o bardzo dużej cenie?</li>
+<li>Czy istnieją przejazdy o bardzo krótkim czasie ale dużej odległości?</li>
+<li>Czy istnieją przejazdy gdzie <code>trip_distance = 0</code> ale <code>fare_amount &gt; 0</code>?</li>
+<li>Czy istnieją przejazdy gdzie <code>dropoff &lt; pickup</code>?</li>
+<li>Czy istnieją przejazdy gdzie czas podróży jest bardzo długi ale dystans mały?</li>
+<li>Czy <code>total_amount</code> = suma pozostałych kolumn kosztowych?</li>
+</ol>
+</section>
+<section id="korelacja-i-dynamika-czasowa" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="korelacja-i-dynamika-czasowa"><span class="header-section-number">2.6</span> Korelacja i dynamika czasowa</h2>
+<ol type="1">
+<li>Czy istnieje korelacja pomiędzy jakimiś zmiennymi numerycznymi?</li>
+<li>Czy średnia długość przejazdu zmienia się w ciągu dnia?</li>
+<li>Czy średnia cena zmienia się w ciągu dnia?</li>
+<li>Czy więcej pasażerów jeździ w weekendy?</li>
+</ol>
+</section>
+<section id="analityka" class="level2" data-number="2.7">
+<h2 data-number="2.7" class="anchored" data-anchor-id="analityka"><span class="header-section-number">2.7</span> Analityka</h2>
+<ol type="1">
+<li>Czy można wykryć sytuacje, w których taxi stało w korku?</li>
+<li>Jakie są najczęstsze trasy?</li>
+<li>Czy istnieje zależność między ceną a trasą?</li>
+<li>Czy napiwki zależą od dystansu/godziny/liczby pasażerów?</li>
+<li>Czy kierowcy różnych firm się różnią?</li>
+</ol>
+</section>
+<section id="modele-ml" class="level2" data-number="2.8">
+<h2 data-number="2.8" class="anchored" data-anchor-id="modele-ml"><span class="header-section-number">2.8</span> Modele ML</h2>
+<ol type="1">
+<li>Jaka cecha może być atrybutem decyzyjnym w modelu regresji?</li>
+<li>Jaka cecha może być atrybutem decyzyjnym w modelu klasyfikacji?</li>
+</ol>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->
@@ -814,14 +661,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./index.html" class="pagination-link" aria-label="Wprowadzenie">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Wprowadzenie</span>
+      <a href="./00-organizacja.html" class="pagination-link" aria-label="Organizacja">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Organizacja</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./01-eda.html" class="pagination-link" aria-label="Explanatory Data Analysis">
-        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Explanatory Data Analysis</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->

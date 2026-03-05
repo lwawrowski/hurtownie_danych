@@ -38,5 +38,95 @@
     "crumbs": [
       "<span class='chapter-number'>1</span>  <span class='chapter-title'>Organizacja</span>"
     ]
+  },
+  {
+    "objectID": "01-eda.html",
+    "href": "01-eda.html",
+    "title": "2  Explanatory Data Analysis",
+    "section": "",
+    "text": "2.1 Podstawowe pytania\nZe strony TLC Trip Record Data pobieramy dane dla Yellow Taxi Trip Records dla stycznia 2025. Opis poszczególnych kolumn w tym zbiorze znajduje się w pliku Data dictionary. Na tej stronie internetowej znajduje się też wiele innych zbiorów, które mogą być przydatne w analizie.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Explanatory Data Analysis</span>"
+    ]
+  },
+  {
+    "objectID": "01-eda.html#podstawowe-pytania",
+    "href": "01-eda.html#podstawowe-pytania",
+    "title": "2  Explanatory Data Analysis",
+    "section": "",
+    "text": "Ile jest rekordów?\nIle jest zmiennych numerycznych?\nIle jest zmiennych kategorycznych?\nCzy istnieją jeszcze inne typy danych?",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Explanatory Data Analysis</span>"
+    ]
+  },
+  {
+    "objectID": "01-eda.html#braki-danych",
+    "href": "01-eda.html#braki-danych",
+    "title": "2  Explanatory Data Analysis",
+    "section": "2.2 Braki danych",
+    "text": "2.2 Braki danych\n\nW których kolumnach występują braki danych?\nCzy braki danych współwystępują w tych samych wierszach?\nCzy braki danych są losowe czy systematyczne?",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Explanatory Data Analysis</span>"
+    ]
+  },
+  {
+    "objectID": "01-eda.html#rozkłady-danych",
+    "href": "01-eda.html#rozkłady-danych",
+    "title": "2  Explanatory Data Analysis",
+    "section": "2.3 Rozkłady danych",
+    "text": "2.3 Rozkłady danych\n\nJak wygląda rozkład przebytego dystansu?\nJak wygląda rozkład opłaty?\nJak wygląda rozkład liczby pasażerów?",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Explanatory Data Analysis</span>"
+    ]
+  },
+  {
+    "objectID": "01-eda.html#czas",
+    "href": "01-eda.html#czas",
+    "title": "2  Explanatory Data Analysis",
+    "section": "2.4 Czas",
+    "text": "2.4 Czas\n\nJakie są najpopularniejsze godziny?\nJakie są najpopularniejsze dni tygodnia?\nJak wygląda rozkład czasu podróży?",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Explanatory Data Analysis</span>"
+    ]
+  },
+  {
+    "objectID": "01-eda.html#jakość-danych---outliery-oraz-niespójności",
+    "href": "01-eda.html#jakość-danych---outliery-oraz-niespójności",
+    "title": "2  Explanatory Data Analysis",
+    "section": "2.5 Jakość danych - outliery oraz niespójności",
+    "text": "2.5 Jakość danych - outliery oraz niespójności\n\nCzy istnieją przejazdy o bardzo dużej odległości?\nCzy istnieją przejazdy o bardzo dużej cenie?\nCzy istnieją przejazdy o bardzo krótkim czasie ale dużej odległości?\nCzy istnieją przejazdy gdzie trip_distance = 0 ale fare_amount &gt; 0?\nCzy istnieją przejazdy gdzie dropoff &lt; pickup?\nCzy istnieją przejazdy gdzie czas podróży jest bardzo długi ale dystans mały?\nCzy total_amount = suma pozostałych kolumn kosztowych?",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Explanatory Data Analysis</span>"
+    ]
+  },
+  {
+    "objectID": "01-eda.html#korelacja-i-dynamika-czasowa",
+    "href": "01-eda.html#korelacja-i-dynamika-czasowa",
+    "title": "2  Explanatory Data Analysis",
+    "section": "2.6 Korelacja i dynamika czasowa",
+    "text": "2.6 Korelacja i dynamika czasowa\n\nCzy istnieje korelacja pomiędzy jakimiś zmiennymi numerycznymi?\nCzy średnia długość przejazdu zmienia się w ciągu dnia?\nCzy średnia cena zmienia się w ciągu dnia?\nCzy więcej pasażerów jeździ w weekendy?",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Explanatory Data Analysis</span>"
+    ]
+  },
+  {
+    "objectID": "01-eda.html#analityka",
+    "href": "01-eda.html#analityka",
+    "title": "2  Explanatory Data Analysis",
+    "section": "2.7 Analityka",
+    "text": "2.7 Analityka\n\nCzy można wykryć sytuacje, w których taxi stało w korku?\nJakie są najczęstsze trasy?\nCzy istnieje zależność między ceną a trasą?\nCzy napiwki zależą od dystansu/godziny/liczby pasażerów?\nCzy kierowcy różnych firm się różnią?",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Explanatory Data Analysis</span>"
+    ]
+  },
+  {
+    "objectID": "01-eda.html#modele-ml",
+    "href": "01-eda.html#modele-ml",
+    "title": "2  Explanatory Data Analysis",
+    "section": "2.8 Modele ML",
+    "text": "2.8 Modele ML\n\nJaka cecha może być atrybutem decyzyjnym w modelu regresji?\nJaka cecha może być atrybutem decyzyjnym w modelu klasyfikacji?",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Explanatory Data Analysis</span>"
+    ]
   }
 ]
