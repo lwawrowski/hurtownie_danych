@@ -8,6 +8,8 @@ book:
   chapters:
     - index.qmd
     - 00-organizacja.qmd
+    - 01-eda.qmd
+    - 02-data-cleaning.qmd
     
 format:
   html:

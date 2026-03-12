@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>2&nbsp; Explanatory Data Analysis – Hurtownie danych i analityczne metody przetwarzania</title>
+<title>3&nbsp; Czyszczenie danych – Hurtownie danych i analityczne metody przetwarzania</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -30,8 +64,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./02-data-cleaning.html" rel="next">
-<link href="./00-organizacja.html" rel="prev">
+<link href="./01-eda.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -68,6 +101,10 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<link href="site_libs/countdown-0.6.0/countdown.css" rel="stylesheet">
+
+<script src="site_libs/countdown-0.6.0/countdown.js"></script>
+
 
 
 </head>
@@ -81,7 +118,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./01-eda.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Explanatory Data Analysis</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-data-cleaning.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Czyszczenie danych</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -120,13 +157,13 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./01-eda.html" class="sidebar-item-text sidebar-link active">
+  <a href="./01-eda.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Explanatory Data Analysis</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./02-data-cleaning.html" class="sidebar-item-text sidebar-link">
+  <a href="./02-data-cleaning.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Czyszczenie danych</span></span></a>
   </div>
 </li>
@@ -140,14 +177,8 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Spis treści</h2>
    
   <ul>
-  <li><a href="#podstawowe-pytania" id="toc-podstawowe-pytania" class="nav-link active" data-scroll-target="#podstawowe-pytania"><span class="header-section-number">2.1</span> Podstawowe pytania</a></li>
-  <li><a href="#braki-danych" id="toc-braki-danych" class="nav-link" data-scroll-target="#braki-danych"><span class="header-section-number">2.2</span> Braki danych</a></li>
-  <li><a href="#rozkłady-danych" id="toc-rozkłady-danych" class="nav-link" data-scroll-target="#rozkłady-danych"><span class="header-section-number">2.3</span> Rozkłady danych</a></li>
-  <li><a href="#czas" id="toc-czas" class="nav-link" data-scroll-target="#czas"><span class="header-section-number">2.4</span> Czas</a></li>
-  <li><a href="#jakość-danych---outliery-oraz-niespójności" id="toc-jakość-danych---outliery-oraz-niespójności" class="nav-link" data-scroll-target="#jakość-danych---outliery-oraz-niespójności"><span class="header-section-number">2.5</span> Jakość danych - outliery oraz niespójności</a></li>
-  <li><a href="#korelacja-i-dynamika-czasowa" id="toc-korelacja-i-dynamika-czasowa" class="nav-link" data-scroll-target="#korelacja-i-dynamika-czasowa"><span class="header-section-number">2.6</span> Korelacja i dynamika czasowa</a></li>
-  <li><a href="#analityka" id="toc-analityka" class="nav-link" data-scroll-target="#analityka"><span class="header-section-number">2.7</span> Analityka</a></li>
-  <li><a href="#modele-ml" id="toc-modele-ml" class="nav-link" data-scroll-target="#modele-ml"><span class="header-section-number">2.8</span> Modele ML</a></li>
+  <li><a href="#case-study" id="toc-case-study" class="nav-link active" data-scroll-target="#case-study"><span class="header-section-number">3.1</span> Case study</a></li>
+  <li><a href="#zadanie" id="toc-zadanie" class="nav-link" data-scroll-target="#zadanie"><span class="header-section-number">3.2</span> Zadanie</a></li>
   </ul>
 </nav>
     </div>
@@ -156,7 +187,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Explanatory Data Analysis</span></h1>
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Czyszczenie danych</span></h1>
 </div>
 
 
@@ -173,77 +204,92 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Ze strony <a href="https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page">TLC Trip Record Data</a> pobieramy dane dla <em>Yellow Taxi Trip Records</em> dla stycznia 2025. Opis poszczególnych kolumn w tym zbiorze znajduje się w pliku <a href="https://www.nyc.gov/assets/tlc/downloads/pdf/data_dictionary_trip_records_yellow.pdf">Data dictionary</a>. Na tej stronie internetowej znajduje się też wiele innych zbiorów, które mogą być przydatne w analizie.</p>
-<section id="podstawowe-pytania" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="podstawowe-pytania"><span class="header-section-number">2.1</span> Podstawowe pytania</h2>
-<ol type="1">
-<li>Ile jest rekordów?</li>
-<li>Ile jest zmiennych numerycznych?</li>
-<li>Ile jest zmiennych kategorycznych?</li>
-<li>Czy istnieją jeszcze inne typy danych?</li>
-</ol>
+<p>Podstawowe przygotowanie zbioru:</p>
+<ul>
+<li><p>czyszczenie nazw kolumn - można użyć np. pakietu <a href="https://pyjanitor-devs.github.io/pyjanitor/">pyjanitor</a></p></li>
+<li><p>usuwanie lub uzupełnianie braków danych</p></li>
+<li><p>usuwanie wartości odstających</p></li>
+<li><p>usuwanie duplikatów</p></li>
+<li><p>ujednolicanie lub grupowanie kategorii</p></li>
+</ul>
+<p>Dalsze kroki przetwarzania danych i przygotowanie danych do modelu:</p>
+<ul>
+<li><p>konwersja typów danych</p></li>
+<li><p>kodowanie danych kategorycznych (one-hot-encoding)</p></li>
+<li><p>normalizacja wartości numerycznych</p></li>
+<li><p>tworzenie nowych cech (feature engineering)</p></li>
+<li><p>podział zbioru</p></li>
+</ul>
+<section id="case-study" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="case-study"><span class="header-section-number">3.1</span> Case study</h2>
+<div class="cell">
+<div class="cell-output-display">
+<countdown-timer class="countdown" id="timer_f36c3ff8" minutes="5" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
+</div>
+</div>
+<p>Poniżej znajduje się przykładowy kod przygotowujący dane do modelu uczenia maszynowego. Kod wykorzystuje bibliotekę scikit-learn oraz pipeline przetwarzania danych. Czy zaproponowany sposób czyszczenia danych jest poprawny?</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> OneHotEncoder</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.compose <span class="im">import</span> ColumnTransformer</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> Pipeline</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># USUWANIE BRAKÓW DANYCH</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.dropna()</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># FEATURE ENGINEERING</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"tpep_pickup_datetime"</span>] <span class="op">=</span> pd.to_datetime(df[<span class="st">"tpep_pickup_datetime"</span>])</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"tpep_dropoff_datetime"</span>] <span class="op">=</span> pd.to_datetime(df[<span class="st">"tpep_dropoff_datetime"</span>])</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"trip_duration_min"</span>] <span class="op">=</span> (</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">"tpep_dropoff_datetime"</span>] <span class="op">-</span> df[<span class="st">"tpep_pickup_datetime"</span>]</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>).dt.total_seconds() <span class="op">/</span> <span class="dv">60</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"pickup_hour"</span>] <span class="op">=</span> df[<span class="st">"tpep_pickup_datetime"</span>].dt.hour</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"speed"</span>] <span class="op">=</span> df[<span class="st">"trip_distance"</span>] <span class="op">/</span> (df[<span class="st">"trip_duration_min"</span>] <span class="op">/</span> <span class="dv">60</span>)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co"># USUWANIE OUTLIERÓW</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df[(df[<span class="st">"fare_amount"</span>] <span class="op">&gt;</span> <span class="dv">0</span>) <span class="op">&amp;</span> (df[<span class="st">"fare_amount"</span>] <span class="op">&lt;</span> df[<span class="st">"fare_amount"</span>].quantile(<span class="fl">0.99</span>))]</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df[(df[<span class="st">"trip_distance"</span>] <span class="op">&gt;</span> <span class="dv">0</span>) <span class="op">&amp;</span> (df[<span class="st">"trip_distance"</span>] <span class="op">&lt;</span> df[<span class="st">"trip_distance"</span>].quantile(<span class="fl">0.99</span>))]</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df[(df[<span class="st">"trip_duration_min"</span>] <span class="op">&gt;</span> <span class="dv">0</span>) <span class="op">&amp;</span> (df[<span class="st">"trip_duration_min"</span>] <span class="op">&lt;</span> df[<span class="st">"trip_duration_min"</span>].quantile(<span class="fl">0.99</span>))]</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>target <span class="op">=</span> <span class="st">"fare_amount"</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df.drop(columns<span class="op">=</span>[target])</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> df[target]</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="co"># STANDARYZACJA</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>scaler <span class="op">=</span> StandardScaler()</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>X_scaled <span class="op">=</span> scaler.fit_transform(X.select_dtypes(include<span class="op">=</span><span class="st">"number"</span>))</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="co"># PODZIAŁ TRAIN / </span><span class="al">TEST</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    X_scaled, y,</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>    test_size<span class="op">=</span><span class="fl">0.2</span>,</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    random_state<span class="op">=</span><span class="dv">42</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="co"># PIPELINE</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>numeric_features <span class="op">=</span> [<span class="st">"trip_distance"</span>, <span class="st">"trip_duration_min"</span>, <span class="st">"speed"</span>]</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>categorical_features <span class="op">=</span> [<span class="st">"VendorID"</span>, <span class="st">"payment_type"</span>, <span class="st">"pickup_hour"</span>]</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>preprocessor <span class="op">=</span> ColumnTransformer(</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>    transformers<span class="op">=</span>[</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"num"</span>, StandardScaler(), numeric_features),</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"cat"</span>, OneHotEncoder(), categorical_features)</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>pipeline <span class="op">=</span> Pipeline([</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"preprocess"</span>, preprocessor)</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="braki-danych" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="braki-danych"><span class="header-section-number">2.2</span> Braki danych</h2>
-<ol type="1">
-<li>W których kolumnach występują braki danych?</li>
-<li>Czy braki danych współwystępują w tych samych wierszach?</li>
-<li>Czy braki danych są losowe czy systematyczne?</li>
-</ol>
-</section>
-<section id="rozkłady-danych" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="rozkłady-danych"><span class="header-section-number">2.3</span> Rozkłady danych</h2>
-<ol type="1">
-<li>Jak wygląda rozkład przebytego dystansu?</li>
-<li>Jak wygląda rozkład opłaty?</li>
-<li>Jak wygląda rozkład liczby pasażerów?</li>
-</ol>
-</section>
-<section id="czas" class="level2" data-number="2.4">
-<h2 data-number="2.4" class="anchored" data-anchor-id="czas"><span class="header-section-number">2.4</span> Czas</h2>
-<ol type="1">
-<li>Jakie są najpopularniejsze godziny?</li>
-<li>Jakie są najpopularniejsze dni tygodnia?</li>
-<li>Jak wygląda rozkład czasu podróży?</li>
-</ol>
-</section>
-<section id="jakość-danych---outliery-oraz-niespójności" class="level2" data-number="2.5">
-<h2 data-number="2.5" class="anchored" data-anchor-id="jakość-danych---outliery-oraz-niespójności"><span class="header-section-number">2.5</span> Jakość danych - outliery oraz niespójności</h2>
-<ol type="1">
-<li>Czy istnieją przejazdy o bardzo dużej odległości?</li>
-<li>Czy istnieją przejazdy o bardzo dużej cenie?</li>
-<li>Czy istnieją przejazdy o bardzo krótkim czasie ale dużej odległości?</li>
-<li>Czy istnieją przejazdy gdzie <code>trip_distance = 0</code> ale <code>fare_amount &gt; 0</code>?</li>
-<li>Czy istnieją przejazdy gdzie <code>dropoff &lt; pickup</code>?</li>
-<li>Czy istnieją przejazdy gdzie czas podróży jest bardzo długi ale dystans mały?</li>
-<li>Czy <code>total_amount</code> = suma pozostałych kolumn kosztowych?</li>
-</ol>
-</section>
-<section id="korelacja-i-dynamika-czasowa" class="level2" data-number="2.6">
-<h2 data-number="2.6" class="anchored" data-anchor-id="korelacja-i-dynamika-czasowa"><span class="header-section-number">2.6</span> Korelacja i dynamika czasowa</h2>
-<ol type="1">
-<li>Czy istnieje korelacja pomiędzy jakimiś zmiennymi numerycznymi?</li>
-<li>Czy średnia długość przejazdu zmienia się w ciągu dnia?</li>
-<li>Czy średnia cena zmienia się w ciągu dnia?</li>
-<li>Czy więcej pasażerów jeździ w weekendy?</li>
-</ol>
-</section>
-<section id="analityka" class="level2" data-number="2.7">
-<h2 data-number="2.7" class="anchored" data-anchor-id="analityka"><span class="header-section-number">2.7</span> Analityka</h2>
-<ol type="1">
-<li>Czy można wykryć sytuacje, w których taxi stało w korku?</li>
-<li>Jakie są najczęstsze trasy?</li>
-<li>Czy istnieje zależność między ceną a trasą?</li>
-<li>Czy napiwki zależą od dystansu/godziny/liczby pasażerów?</li>
-<li>Czy kierowcy różnych firm się różnią?</li>
-</ol>
-</section>
-<section id="modele-ml" class="level2" data-number="2.8">
-<h2 data-number="2.8" class="anchored" data-anchor-id="modele-ml"><span class="header-section-number">2.8</span> Modele ML</h2>
-<ol type="1">
-<li>Jaka cecha może być atrybutem decyzyjnym w modelu regresji?</li>
-<li>Jaka cecha może być atrybutem decyzyjnym w modelu klasyfikacji?</li>
-</ol>
+<section id="zadanie" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="zadanie"><span class="header-section-number">3.2</span> Zadanie</h2>
+<p>Przygotuj poprawny pipeline przetwarzania danych oraz wytrenuj przykładowy model ML. Jako kryterium przyjmij metrykę RMSE mierzoną na zbiorze testowym.</p>
 
 
 </section>
@@ -668,14 +714,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./00-organizacja.html" class="pagination-link" aria-label="Organizacja">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Organizacja</span></span>
+      <a href="./01-eda.html" class="pagination-link" aria-label="Explanatory Data Analysis">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Explanatory Data Analysis</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./02-data-cleaning.html" class="pagination-link" aria-label="Czyszczenie danych">
-        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Czyszczenie danych</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->

@@ -1,0 +1,108 @@
+# Czyszczenie danych
+
+```{r}
+#| include: false
+library(countdown)
+```
+
+
+Podstawowe przygotowanie zbioru:
+
+- czyszczenie nazw kolumn - można użyć np. pakietu [pyjanitor](https://pyjanitor-devs.github.io/pyjanitor/)
+
+- usuwanie lub uzupełnianie braków danych
+
+- usuwanie wartości odstających
+
+- usuwanie duplikatów
+
+- ujednolicanie lub grupowanie kategorii
+
+Dalsze kroki przetwarzania danych i przygotowanie danych do modelu:
+
+- konwersja typów danych
+
+- kodowanie danych kategorycznych (one-hot-encoding)
+
+- normalizacja wartości numerycznych
+
+- tworzenie nowych cech (feature engineering)
+
+- podział zbioru
+
+## Case study
+
+```{r}
+#| echo: false
+countdown(minutes = 5, seconds = 0)
+```
+
+
+Poniżej znajduje się przykładowy kod przygotowujący dane do modelu uczenia maszynowego. Kod wykorzystuje bibliotekę scikit-learn oraz pipeline przetwarzania danych. Czy zaproponowany sposób czyszczenia danych jest poprawny?
+
+```python
+import pandas as pd
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+
+# USUWANIE BRAKÓW DANYCH
+df = df.dropna()
+
+# FEATURE ENGINEERING
+df["tpep_pickup_datetime"] = pd.to_datetime(df["tpep_pickup_datetime"])
+df["tpep_dropoff_datetime"] = pd.to_datetime(df["tpep_dropoff_datetime"])
+
+df["trip_duration_min"] = (
+    df["tpep_dropoff_datetime"] - df["tpep_pickup_datetime"]
+).dt.total_seconds() / 60
+
+df["pickup_hour"] = df["tpep_pickup_datetime"].dt.hour
+
+df["speed"] = df["trip_distance"] / (df["trip_duration_min"] / 60)
+
+# USUWANIE OUTLIERÓW
+df = df[(df["fare_amount"] > 0) & (df["fare_amount"] < df["fare_amount"].quantile(0.99))]
+df = df[(df["trip_distance"] > 0) & (df["trip_distance"] < df["trip_distance"].quantile(0.99))]
+df = df[(df["trip_duration_min"] > 0) & (df["trip_duration_min"] < df["trip_duration_min"].quantile(0.99))]
+
+target = "fare_amount"
+
+X = df.drop(columns=[target])
+y = df[target]
+
+# STANDARYZACJA
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X.select_dtypes(include="number"))
+
+# PODZIAŁ TRAIN / TEST
+X_train, X_test, y_train, y_test = train_test_split(
+    X_scaled, y,
+    test_size=0.2,
+    random_state=42
+)
+
+# PIPELINE
+numeric_features = ["trip_distance", "trip_duration_min", "speed"]
+categorical_features = ["VendorID", "payment_type", "pickup_hour"]
+
+preprocessor = ColumnTransformer(
+    transformers=[
+        ("num", StandardScaler(), numeric_features),
+        ("cat", OneHotEncoder(), categorical_features)
+    ]
+)
+
+pipeline = Pipeline([
+    ("preprocess", preprocessor)
+])
+
+```
+
+## Zadanie
+
+Przygotuj poprawny pipeline przetwarzania danych oraz wytrenuj przykładowy model ML. Jako kryterium przyjmij metrykę RMSE mierzoną na zbiorze testowym. 
+
