@@ -24,7 +24,7 @@ Data Lake to:
 - brak sztywnego schematu (schema-on-read)
 - możliwość pracy na dużych wolumenach danych
 
- Typowa struktura Data Lake
+Możliwa struktura Data Lake
 
 ```
 
@@ -38,9 +38,7 @@ container/
 ## Tworzenie Storage Account
 
 1. Wejdź na stronę https://portal.azure.com i zaloguj się na swoje konto.
-
 2. Utworzenie zasobu - wyszukaj `Storage accounts` i kliknij `Create`.
-
 3. Konfiguracja
 
 - **Resource group**: `rg-taxi-lab` (lub utwórz nową)
@@ -67,7 +65,7 @@ gold/
 
 ## Dostęp do danych (Access Key)
 
-1. Znajdź klucz dostępu. W Storage Account przejdź do `Security + networking → Access keys`
+1. W Storage Account przejdź do `Security + networking → Access keys`
 2. Skopiuj klucz `key1`.
 
 ## Python – odczyt danych
@@ -125,24 +123,105 @@ Przetwórz dane i zapisz je w strefie `silver`.
 2. Usuń rekordy gdzie `trip_distance <= 0`
 3. Zapisz dane do `silver/cleaned.parquet`
 
-Podpowiedź
-
-```python
-df_clean = df[df["trip_distance"] > 0]
-
-output_path = f"abfs://taxi-data@{account_name}.dfs.core.windows.net/silver/cleaned.parquet"
-
-df_clean.to_parquet(
-    output_path,
-    storage_options={
-        "account_name": account_name,
-        "account_key": account_key
-    }
-)
-```
-
 ### Zadanie
 
 1. Oblicz średnią długość przejazdu na godzinę
 2. Zapisz wynik do `gold/hour_aggregated.parquet`
 
+## Dostęp do danych (SAS token)
+
+Access Key:
+
+- daje pełny dostęp do całego konta
+- jest niebezpieczny w projektach
+
+SAS (Shared Access Signature):
+
+- daje ograniczony dostęp
+- może wygasnąć
+- może mieć tylko read/write
+
+Tworzenie SAS token:
+
+1. W Azure przejdź do `Storage Account → Containers → taxilake12345`
+2. Następnie `Security + networking → Shared access signature`
+3. Zaznacz niezbędne uprawnienia i określ czas ważności
+4. Wygeneruj token
+
+Wczytanie danych z SAS token w python:
+
+```python
+import pandas as pd
+
+account_name = "TWOJA_NAZWA_STORAGE"
+sas_token = "TWOJ_SAS_TOKEN"
+
+file_path = f"abfs://taxi-data@{account_name}.dfs.core.windows.net/raw/yellow_tripdata_2025-01.parquet"
+
+df = pd.read_parquet(
+    file_path,
+    storage_options={
+        "account_name": account_name,
+        "sas_token": account_key
+    }
+)
+
+df.head()
+```
+
+### Zadanie
+
+Co się stanie jeśli spróbujemy zapisać plik z wykorzystaniem SAS token bez wymaganych uprawnień?
+
+## Zarządzenie plikami z poziomu kodu
+
+Usuwanie plików
+
+```python
+from adlfs import AzureBlobFileSystem
+
+account_name = "TWOJA_NAZWA"
+account_key = "TWOJ_KEY"
+
+fs = AzureBlobFileSystem(
+    account_name=account_name,
+    account_key=account_key
+)
+
+# ścieżka: container + path
+file_path = "taxi-data/silver/cleaned.parquet"
+
+fs.rm(file_path)
+
+print("Plik usunięty")
+```
+
+Usuwanie folderu
+
+```python
+fs.rm("taxi-data/silver", recursive=True)
+```
+
+Sprawdzanie co jest w folderze
+
+```python
+fs.ls("taxi-data/raw")
+```
+
+### Zadanie
+
+Stwórz katalog `archive` i przenieś tam plik `silver/cleaned.parquet`.
+
+## Analiza kosztów
+
+W Azure płacimy za:
+
+1. Przechowywanie danych (GB / miesiąc)
+2. Operacje (read / write)
+3. Transfer danych (egress)
+
+![Cost management](img/cost_management.png)
+
+- Parquet = mniej danych = niższe koszty
+- wiele małych operacji = drożej
+- Data Lake jest generalnie tani, ale nie „za darmo”

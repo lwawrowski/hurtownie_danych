@@ -10,6 +10,7 @@ book:
     - 00-organizacja.qmd
     - 01-eda.qmd
     - 02-data-cleaning.qmd
+    - 03-azure-data-lake.qmd
     
 format:
   html:
