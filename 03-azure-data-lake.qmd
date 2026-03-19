@@ -162,7 +162,7 @@ df = pd.read_parquet(
     file_path,
     storage_options={
         "account_name": account_name,
-        "sas_token": account_key
+        "sas_token": sas_token
     }
 )
 
