@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>3&nbsp; Czyszczenie danych – Hurtownie danych i analityczne metody przetwarzania</title>
+<title>4&nbsp; Azure Data Lake – Hurtownie danych i analityczne metody przetwarzania</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -64,8 +64,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./03-azure-data-lake.html" rel="next">
-<link href="./01-eda.html" rel="prev">
+<link href="./02-data-cleaning.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -102,10 +101,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
-<link href="site_libs/countdown-0.6.0/countdown.css" rel="stylesheet">
-
-<script src="site_libs/countdown-0.6.0/countdown.js"></script>
-
 
 
 </head>
@@ -119,7 +114,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-data-cleaning.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Czyszczenie danych</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03-azure-data-lake.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Azure Data Lake</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -164,13 +159,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./02-data-cleaning.html" class="sidebar-item-text sidebar-link active">
+  <a href="./02-data-cleaning.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Czyszczenie danych</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./03-azure-data-lake.html" class="sidebar-item-text sidebar-link">
+  <a href="./03-azure-data-lake.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Azure Data Lake</span></span></a>
   </div>
 </li>
@@ -184,8 +179,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Spis treści</h2>
    
   <ul>
-  <li><a href="#case-study" id="toc-case-study" class="nav-link active" data-scroll-target="#case-study"><span class="header-section-number">3.1</span> Case study</a></li>
-  <li><a href="#zadanie" id="toc-zadanie" class="nav-link" data-scroll-target="#zadanie"><span class="header-section-number">3.2</span> Zadanie</a></li>
+  <li><a href="#wprowadzenie" id="toc-wprowadzenie" class="nav-link active" data-scroll-target="#wprowadzenie"><span class="header-section-number">4.1</span> Wprowadzenie</a></li>
+  <li><a href="#co-to-jest-data-lake" id="toc-co-to-jest-data-lake" class="nav-link" data-scroll-target="#co-to-jest-data-lake"><span class="header-section-number">4.2</span> Co to jest Data Lake?</a></li>
+  <li><a href="#tworzenie-storage-account" id="toc-tworzenie-storage-account" class="nav-link" data-scroll-target="#tworzenie-storage-account"><span class="header-section-number">4.3</span> Tworzenie Storage Account</a></li>
+  <li><a href="#tworzenie-kontenera-i-upload-danych" id="toc-tworzenie-kontenera-i-upload-danych" class="nav-link" data-scroll-target="#tworzenie-kontenera-i-upload-danych"><span class="header-section-number">4.4</span> Tworzenie kontenera i upload danych</a></li>
+  <li><a href="#dostęp-do-danych-access-key" id="toc-dostęp-do-danych-access-key" class="nav-link" data-scroll-target="#dostęp-do-danych-access-key"><span class="header-section-number">4.5</span> Dostęp do danych (Access Key)</a></li>
+  <li><a href="#python-odczyt-danych" id="toc-python-odczyt-danych" class="nav-link" data-scroll-target="#python-odczyt-danych"><span class="header-section-number">4.6</span> Python – odczyt danych</a></li>
+  <li><a href="#podstawowa-analiza-danych" id="toc-podstawowa-analiza-danych" class="nav-link" data-scroll-target="#podstawowa-analiza-danych"><span class="header-section-number">4.7</span> Podstawowa analiza danych</a>
+  <ul class="collapse">
+  <li><a href="#zadanie" id="toc-zadanie" class="nav-link" data-scroll-target="#zadanie"><span class="header-section-number">4.7.1</span> Zadanie</a></li>
+  <li><a href="#zadanie-1" id="toc-zadanie-1" class="nav-link" data-scroll-target="#zadanie-1"><span class="header-section-number">4.7.2</span> Zadanie</a></li>
+  </ul></li>
+  <li><a href="#dostęp-do-danych-sas-token" id="toc-dostęp-do-danych-sas-token" class="nav-link" data-scroll-target="#dostęp-do-danych-sas-token"><span class="header-section-number">4.8</span> Dostęp do danych (SAS token)</a>
+  <ul class="collapse">
+  <li><a href="#zadanie-2" id="toc-zadanie-2" class="nav-link" data-scroll-target="#zadanie-2"><span class="header-section-number">4.8.1</span> Zadanie</a></li>
+  </ul></li>
+  <li><a href="#zarządzenie-plikami-z-poziomu-kodu" id="toc-zarządzenie-plikami-z-poziomu-kodu" class="nav-link" data-scroll-target="#zarządzenie-plikami-z-poziomu-kodu"><span class="header-section-number">4.9</span> Zarządzenie plikami z poziomu kodu</a>
+  <ul class="collapse">
+  <li><a href="#zadanie-3" id="toc-zadanie-3" class="nav-link" data-scroll-target="#zadanie-3"><span class="header-section-number">4.9.1</span> Zadanie</a></li>
+  </ul></li>
+  <li><a href="#analiza-kosztów" id="toc-analiza-kosztów" class="nav-link" data-scroll-target="#analiza-kosztów"><span class="header-section-number">4.10</span> Analiza kosztów</a></li>
   </ul>
 </nav>
     </div>
@@ -194,7 +207,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Czyszczenie danych</span></h1>
+<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Azure Data Lake</span></h1>
 </div>
 
 
@@ -211,94 +224,216 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Podstawowe przygotowanie zbioru:</p>
+<p>Celem zajęć jest zapoznanie się z pracą na danych przechowywanych w chmurze zamiast lokalnych plików.</p>
+<section id="wprowadzenie" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="wprowadzenie"><span class="header-section-number">4.1</span> Wprowadzenie</h2>
+<p>Do tej pory pracowaliśmy na danych lokalnie:</p>
+<pre><code>data/yellow_tripdata_2025-01.parquet</code></pre>
+<p>W rzeczywistych systemach dane są przechowywane w chmurze:</p>
 <ul>
-<li><p>czyszczenie nazw kolumn - można użyć np. pakietu <a href="https://pyjanitor-devs.github.io/pyjanitor/">pyjanitor</a></p></li>
-<li><p>usuwanie lub uzupełnianie braków danych</p></li>
-<li><p>usuwanie wartości odstających</p></li>
-<li><p>usuwanie duplikatów</p></li>
-<li><p>ujednolicanie lub grupowanie kategorii</p></li>
+<li>Azure Data Lake</li>
+<li>AWS S3</li>
+<li>Google Cloud Storage</li>
 </ul>
-<p>Dalsze kroki przetwarzania danych i przygotowanie danych do modelu:</p>
-<ul>
-<li><p>konwersja typów danych</p></li>
-<li><p>kodowanie danych kategorycznych (one-hot-encoding)</p></li>
-<li><p>normalizacja wartości numerycznych</p></li>
-<li><p>tworzenie nowych cech (feature engineering)</p></li>
-<li><p>podział zbioru</p></li>
-</ul>
-<section id="case-study" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="case-study"><span class="header-section-number">3.1</span> Case study</h2>
-<div class="cell">
-<div class="cell-output-display">
-<countdown-timer class="countdown" id="timer_1fba5ef5" minutes="5" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
-</div>
-</div>
-<p>Poniżej znajduje się przykładowy kod przygotowujący dane do modelu uczenia maszynowego. Kod wykorzystuje bibliotekę scikit-learn oraz pipeline przetwarzania danych. Czy zaproponowany sposób czyszczenia danych jest poprawny?</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> OneHotEncoder</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.compose <span class="im">import</span> ColumnTransformer</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> Pipeline</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_parquet(<span class="st">"data/yellow_tripdata_2025-01.parquet"</span>)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># USUWANIE BRAKÓW DANYCH</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.dropna()</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># FEATURE ENGINEERING</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"tpep_pickup_datetime"</span>] <span class="op">=</span> pd.to_datetime(df[<span class="st">"tpep_pickup_datetime"</span>])</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"tpep_dropoff_datetime"</span>] <span class="op">=</span> pd.to_datetime(df[<span class="st">"tpep_dropoff_datetime"</span>])</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"trip_duration_min"</span>] <span class="op">=</span> (</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">"tpep_dropoff_datetime"</span>] <span class="op">-</span> df[<span class="st">"tpep_pickup_datetime"</span>]</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>).dt.total_seconds() <span class="op">/</span> <span class="dv">60</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"pickup_hour"</span>] <span class="op">=</span> df[<span class="st">"tpep_pickup_datetime"</span>].dt.hour</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"speed"</span>] <span class="op">=</span> df[<span class="st">"trip_distance"</span>] <span class="op">/</span> (df[<span class="st">"trip_duration_min"</span>] <span class="op">/</span> <span class="dv">60</span>)</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co"># USUWANIE OUTLIERÓW</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df[(df[<span class="st">"fare_amount"</span>] <span class="op">&gt;</span> <span class="dv">0</span>) <span class="op">&amp;</span> (df[<span class="st">"fare_amount"</span>] <span class="op">&lt;</span> df[<span class="st">"fare_amount"</span>].quantile(<span class="fl">0.99</span>))]</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df[(df[<span class="st">"trip_distance"</span>] <span class="op">&gt;</span> <span class="dv">0</span>) <span class="op">&amp;</span> (df[<span class="st">"trip_distance"</span>] <span class="op">&lt;</span> df[<span class="st">"trip_distance"</span>].quantile(<span class="fl">0.99</span>))]</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df[(df[<span class="st">"trip_duration_min"</span>] <span class="op">&gt;</span> <span class="dv">0</span>) <span class="op">&amp;</span> (df[<span class="st">"trip_duration_min"</span>] <span class="op">&lt;</span> df[<span class="st">"trip_duration_min"</span>].quantile(<span class="fl">0.99</span>))]</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>target <span class="op">=</span> <span class="st">"fare_amount"</span></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df.drop(columns<span class="op">=</span>[target])</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> df[target]</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="co"># STANDARYZACJA</span></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>scaler <span class="op">=</span> StandardScaler()</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>X_scaled <span class="op">=</span> scaler.fit_transform(X.select_dtypes(include<span class="op">=</span><span class="st">"number"</span>))</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="co"># PODZIAŁ TRAIN / </span><span class="al">TEST</span></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    X_scaled, y,</span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    test_size<span class="op">=</span><span class="fl">0.2</span>,</span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    random_state<span class="op">=</span><span class="dv">42</span></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="co"># PIPELINE</span></span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>numeric_features <span class="op">=</span> [<span class="st">"trip_distance"</span>, <span class="st">"trip_duration_min"</span>, <span class="st">"speed"</span>]</span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>categorical_features <span class="op">=</span> [<span class="st">"VendorID"</span>, <span class="st">"payment_type"</span>, <span class="st">"pickup_hour"</span>]</span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>preprocessor <span class="op">=</span> ColumnTransformer(</span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>    transformers<span class="op">=</span>[</span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"num"</span>, StandardScaler(), numeric_features),</span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"cat"</span>, OneHotEncoder(), categorical_features)</span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>    ]</span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>pipeline <span class="op">=</span> Pipeline([</span>
-<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"preprocess"</span>, preprocessor)</span>
-<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="zadanie" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="zadanie"><span class="header-section-number">3.2</span> Zadanie</h2>
-<p>Przygotuj poprawny pipeline przetwarzania danych oraz wytrenuj przykładowy model ML. Jako kryterium przyjmij metrykę RMSE mierzoną na zbiorze testowym.</p>
+<section id="co-to-jest-data-lake" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="co-to-jest-data-lake"><span class="header-section-number">4.2</span> Co to jest Data Lake?</h2>
+<p>Data Lake to:</p>
+<ul>
+<li>miejsce przechowywania danych w różnych formatach (np. parquet, csv)</li>
+<li>brak sztywnego schematu (schema-on-read)</li>
+<li>możliwość pracy na dużych wolumenach danych</li>
+</ul>
+<p>Możliwa struktura Data Lake</p>
+<pre><code>
+container/
+├── raw/      # dane surowe
+├── silver/   # dane przetworzone
+└── gold/     # dane do analizy / dashboardów
+</code></pre>
+</section>
+<section id="tworzenie-storage-account" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="tworzenie-storage-account"><span class="header-section-number">4.3</span> Tworzenie Storage Account</h2>
+<ol type="1">
+<li>Wejdź na stronę https://portal.azure.com i zaloguj się na swoje konto.</li>
+<li>Utworzenie zasobu - wyszukaj <code>Storage accounts</code> i kliknij <code>Create</code>.</li>
+<li>Konfiguracja</li>
+</ol>
+<ul>
+<li><strong>Resource group</strong>: <code>rg-taxi-lab</code> (lub utwórz nową)</li>
+<li><strong>Storage account name</strong>: unikalna nazwa (np. <code>taxilake12345</code>)</li>
+<li><strong>Region</strong>: Europe (np. Europe Poland Central)</li>
+<li><strong>Preferred storage type</strong>: Azure Blob Storage</li>
+</ul>
+<ol start="4" type="1">
+<li>W zakładce <code>Advanced</code> włącz opcję <code>Enable hierarchical namespace</code></li>
+<li>Utworzenie Data Lake: Kliknij <code>Review + Create → Create</code> i poczekaj aż zasób zostanie utworzony.</li>
+</ol>
+</section>
+<section id="tworzenie-kontenera-i-upload-danych" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="tworzenie-kontenera-i-upload-danych"><span class="header-section-number">4.4</span> Tworzenie kontenera i upload danych</h2>
+<ol type="1">
+<li>Przejdź do kontenerów w Storage Account - <code>Data storage → Containers</code>.</li>
+<li>Utwórz kontener - kliknij: <code>Container</code> i podaj nazwę np. <code>taxi-data</code>.</li>
+<li>Utwórz strukturę folderów - wejdź do kontenera i utwórz foldery:</li>
+</ol>
+<pre><code>raw/
+silver/
+gold/</code></pre>
+<ol start="4" type="1">
+<li>Wgraj dane - wejdź do folderu <code>raw</code> i kliknij <code>upload</code>. Następnie wgraj plik <code>yellow_tripdata_2025-01.parquet</code></li>
+</ol>
+</section>
+<section id="dostęp-do-danych-access-key" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="dostęp-do-danych-access-key"><span class="header-section-number">4.5</span> Dostęp do danych (Access Key)</h2>
+<ol type="1">
+<li>W Storage Account przejdź do <code>Security + networking → Access keys</code></li>
+<li>Skopiuj klucz <code>key1</code>.</li>
+</ol>
+</section>
+<section id="python-odczyt-danych" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="python-odczyt-danych"><span class="header-section-number">4.6</span> Python – odczyt danych</h2>
+<p>W pierwszym kroku potrzebujemy mieć zainstalowane następujące biblioteki:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install pandas pyarrow fsspec adlfs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Następnie możemy uruchomić kod:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>account_name <span class="op">=</span> <span class="st">"TWOJA_NAZWA_STORAGE"</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>account_key <span class="op">=</span> <span class="st">"TWOJ_KLUCZ"</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>file_path <span class="op">=</span> <span class="ss">f"abfs://taxi-data@</span><span class="sc">{</span>account_name<span class="sc">}</span><span class="ss">.dfs.core.windows.net/raw/yellow_tripdata_2025-01.parquet"</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_parquet(</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    file_path,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    storage_options<span class="op">=</span>{</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"account_name"</span>: account_name,</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"account_key"</span>: account_key</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="podstawowa-analiza-danych" class="level2" data-number="4.7">
+<h2 data-number="4.7" class="anchored" data-anchor-id="podstawowa-analiza-danych"><span class="header-section-number">4.7</span> Podstawowa analiza danych</h2>
+<p>Wykonaj poniższe operacje:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># liczba rekordów</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>df.shape</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># średni dystans</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"trip_distance"</span>].mean()</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># najpopularniejsze godziny</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"tpep_pickup_datetime"</span>] <span class="op">=</span> pd.to_datetime(df[<span class="st">"tpep_pickup_datetime"</span>])</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"hour"</span>] <span class="op">=</span> df[<span class="st">"tpep_pickup_datetime"</span>].dt.hour</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"hour"</span>].value_counts().head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="zadanie" class="level3" data-number="4.7.1">
+<h3 data-number="4.7.1" class="anchored" data-anchor-id="zadanie"><span class="header-section-number">4.7.1</span> Zadanie</h3>
+<p>Przetwórz dane i zapisz je w strefie <code>silver</code>.</p>
+<ol type="1">
+<li>Wczytaj dane z <code>raw</code></li>
+<li>Usuń rekordy gdzie <code>trip_distance &lt;= 0</code></li>
+<li>Zapisz dane do <code>silver/cleaned.parquet</code></li>
+</ol>
+</section>
+<section id="zadanie-1" class="level3" data-number="4.7.2">
+<h3 data-number="4.7.2" class="anchored" data-anchor-id="zadanie-1"><span class="header-section-number">4.7.2</span> Zadanie</h3>
+<ol type="1">
+<li>Oblicz średnią długość przejazdu na godzinę</li>
+<li>Zapisz wynik do <code>gold/hour_aggregated.parquet</code></li>
+</ol>
+</section>
+</section>
+<section id="dostęp-do-danych-sas-token" class="level2" data-number="4.8">
+<h2 data-number="4.8" class="anchored" data-anchor-id="dostęp-do-danych-sas-token"><span class="header-section-number">4.8</span> Dostęp do danych (SAS token)</h2>
+<p>Access Key:</p>
+<ul>
+<li>daje pełny dostęp do całego konta</li>
+<li>jest niebezpieczny w projektach</li>
+</ul>
+<p>SAS (Shared Access Signature):</p>
+<ul>
+<li>daje ograniczony dostęp</li>
+<li>może wygasnąć</li>
+<li>może mieć tylko read/write</li>
+</ul>
+<p>Tworzenie SAS token:</p>
+<ol type="1">
+<li>W Azure przejdź do <code>Storage Account → Containers → taxilake12345</code></li>
+<li>Następnie <code>Security + networking → Shared access signature</code></li>
+<li>Zaznacz niezbędne uprawnienia i określ czas ważności</li>
+<li>Wygeneruj token</li>
+</ol>
+<p>Wczytanie danych z SAS token w python:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>account_name <span class="op">=</span> <span class="st">"TWOJA_NAZWA_STORAGE"</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>sas_token <span class="op">=</span> <span class="st">"TWOJ_SAS_TOKEN"</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>file_path <span class="op">=</span> <span class="ss">f"abfs://taxi-data@</span><span class="sc">{</span>account_name<span class="sc">}</span><span class="ss">.dfs.core.windows.net/raw/yellow_tripdata_2025-01.parquet"</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_parquet(</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    file_path,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    storage_options<span class="op">=</span>{</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"account_name"</span>: account_name,</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"sas_token"</span>: account_key</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="zadanie-2" class="level3" data-number="4.8.1">
+<h3 data-number="4.8.1" class="anchored" data-anchor-id="zadanie-2"><span class="header-section-number">4.8.1</span> Zadanie</h3>
+<p>Co się stanie jeśli spróbujemy zapisać plik z wykorzystaniem SAS token bez wymaganych uprawnień?</p>
+</section>
+</section>
+<section id="zarządzenie-plikami-z-poziomu-kodu" class="level2" data-number="4.9">
+<h2 data-number="4.9" class="anchored" data-anchor-id="zarządzenie-plikami-z-poziomu-kodu"><span class="header-section-number">4.9</span> Zarządzenie plikami z poziomu kodu</h2>
+<p>Usuwanie plików</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> adlfs <span class="im">import</span> AzureBlobFileSystem</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>account_name <span class="op">=</span> <span class="st">"TWOJA_NAZWA"</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>account_key <span class="op">=</span> <span class="st">"TWOJ_KEY"</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>fs <span class="op">=</span> AzureBlobFileSystem(</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    account_name<span class="op">=</span>account_name,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    account_key<span class="op">=</span>account_key</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co"># ścieżka: container + path</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>file_path <span class="op">=</span> <span class="st">"taxi-data/silver/cleaned.parquet"</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>fs.rm(file_path)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Plik usunięty"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Usuwanie folderu</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>fs.rm(<span class="st">"taxi-data/silver"</span>, recursive<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Sprawdzanie co jest w folderze</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fs.ls(<span class="st">"taxi-data/raw"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="zadanie-3" class="level3" data-number="4.9.1">
+<h3 data-number="4.9.1" class="anchored" data-anchor-id="zadanie-3"><span class="header-section-number">4.9.1</span> Zadanie</h3>
+<p>Stwórz katalog <code>archive</code> i przenieś tam plik <code>silver/cleaned.parquet</code>.</p>
+</section>
+</section>
+<section id="analiza-kosztów" class="level2" data-number="4.10">
+<h2 data-number="4.10" class="anchored" data-anchor-id="analiza-kosztów"><span class="header-section-number">4.10</span> Analiza kosztów</h2>
+<p>W Azure płacimy za:</p>
+<ol type="1">
+<li>Przechowywanie danych (GB / miesiąc)</li>
+<li>Operacje (read / write)</li>
+<li>Transfer danych (egress)</li>
+</ol>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="img/cost_management.png" class="img-fluid figure-img"></p>
+<figcaption>Cost management</figcaption>
+</figure>
+</div>
+<ul>
+<li>Parquet = mniej danych = niższe koszty</li>
+<li>wiele małych operacji = drożej</li>
+<li>Data Lake jest generalnie tani, ale nie „za darmo”</li>
+</ul>
+<p>Rozwiązania self-hosted: MinIO, Ceph, HDFS.</p>
 
 
 </section>
@@ -723,14 +858,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./01-eda.html" class="pagination-link" aria-label="Explanatory Data Analysis">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Explanatory Data Analysis</span></span>
+      <a href="./02-data-cleaning.html" class="pagination-link" aria-label="Czyszczenie danych">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Czyszczenie danych</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./03-azure-data-lake.html" class="pagination-link" aria-label="Azure Data Lake">
-        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Azure Data Lake</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->

@@ -144,7 +144,7 @@
     "href": "02-data-cleaning.html#case-study",
     "title": "3  Czyszczenie danych",
     "section": "",
-    "text": "import pandas as pd\n\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.preprocessing import OneHotEncoder\nfrom sklearn.compose import ColumnTransformer\nfrom sklearn.pipeline import Pipeline\n\n# USUWANIE BRAKÓW DANYCH\ndf = df.dropna()\n\n# FEATURE ENGINEERING\ndf[\"tpep_pickup_datetime\"] = pd.to_datetime(df[\"tpep_pickup_datetime\"])\ndf[\"tpep_dropoff_datetime\"] = pd.to_datetime(df[\"tpep_dropoff_datetime\"])\n\ndf[\"trip_duration_min\"] = (\n    df[\"tpep_dropoff_datetime\"] - df[\"tpep_pickup_datetime\"]\n).dt.total_seconds() / 60\n\ndf[\"pickup_hour\"] = df[\"tpep_pickup_datetime\"].dt.hour\n\ndf[\"speed\"] = df[\"trip_distance\"] / (df[\"trip_duration_min\"] / 60)\n\n# USUWANIE OUTLIERÓW\ndf = df[(df[\"fare_amount\"] &gt; 0) & (df[\"fare_amount\"] &lt; df[\"fare_amount\"].quantile(0.99))]\ndf = df[(df[\"trip_distance\"] &gt; 0) & (df[\"trip_distance\"] &lt; df[\"trip_distance\"].quantile(0.99))]\ndf = df[(df[\"trip_duration_min\"] &gt; 0) & (df[\"trip_duration_min\"] &lt; df[\"trip_duration_min\"].quantile(0.99))]\n\ntarget = \"fare_amount\"\n\nX = df.drop(columns=[target])\ny = df[target]\n\n# STANDARYZACJA\nscaler = StandardScaler()\nX_scaled = scaler.fit_transform(X.select_dtypes(include=\"number\"))\n\n# PODZIAŁ TRAIN / TEST\nX_train, X_test, y_train, y_test = train_test_split(\n    X_scaled, y,\n    test_size=0.2,\n    random_state=42\n)\n\n# PIPELINE\nnumeric_features = [\"trip_distance\", \"trip_duration_min\", \"speed\"]\ncategorical_features = [\"VendorID\", \"payment_type\", \"pickup_hour\"]\n\npreprocessor = ColumnTransformer(\n    transformers=[\n        (\"num\", StandardScaler(), numeric_features),\n        (\"cat\", OneHotEncoder(), categorical_features)\n    ]\n)\n\npipeline = Pipeline([\n    (\"preprocess\", preprocessor)\n])",
+    "text": "import pandas as pd\n\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.preprocessing import OneHotEncoder\nfrom sklearn.compose import ColumnTransformer\nfrom sklearn.pipeline import Pipeline\n\ndf = pd.read_parquet(\"data/yellow_tripdata_2025-01.parquet\")\n\n# USUWANIE BRAKÓW DANYCH\ndf = df.dropna()\n\n# FEATURE ENGINEERING\ndf[\"tpep_pickup_datetime\"] = pd.to_datetime(df[\"tpep_pickup_datetime\"])\ndf[\"tpep_dropoff_datetime\"] = pd.to_datetime(df[\"tpep_dropoff_datetime\"])\n\ndf[\"trip_duration_min\"] = (\n    df[\"tpep_dropoff_datetime\"] - df[\"tpep_pickup_datetime\"]\n).dt.total_seconds() / 60\n\ndf[\"pickup_hour\"] = df[\"tpep_pickup_datetime\"].dt.hour\n\ndf[\"speed\"] = df[\"trip_distance\"] / (df[\"trip_duration_min\"] / 60)\n\n# USUWANIE OUTLIERÓW\ndf = df[(df[\"fare_amount\"] &gt; 0) & (df[\"fare_amount\"] &lt; df[\"fare_amount\"].quantile(0.99))]\ndf = df[(df[\"trip_distance\"] &gt; 0) & (df[\"trip_distance\"] &lt; df[\"trip_distance\"].quantile(0.99))]\ndf = df[(df[\"trip_duration_min\"] &gt; 0) & (df[\"trip_duration_min\"] &lt; df[\"trip_duration_min\"].quantile(0.99))]\n\ntarget = \"fare_amount\"\n\nX = df.drop(columns=[target])\ny = df[target]\n\n# STANDARYZACJA\nscaler = StandardScaler()\nX_scaled = scaler.fit_transform(X.select_dtypes(include=\"number\"))\n\n# PODZIAŁ TRAIN / TEST\nX_train, X_test, y_train, y_test = train_test_split(\n    X_scaled, y,\n    test_size=0.2,\n    random_state=42\n)\n\n# PIPELINE\nnumeric_features = [\"trip_distance\", \"trip_duration_min\", \"speed\"]\ncategorical_features = [\"VendorID\", \"payment_type\", \"pickup_hour\"]\n\npreprocessor = ColumnTransformer(\n    transformers=[\n        (\"num\", StandardScaler(), numeric_features),\n        (\"cat\", OneHotEncoder(), categorical_features)\n    ]\n)\n\npipeline = Pipeline([\n    (\"preprocess\", preprocessor)\n])",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Czyszczenie danych</span>"
     ]
@@ -157,6 +157,116 @@
     "text": "3.2 Zadanie\nPrzygotuj poprawny pipeline przetwarzania danych oraz wytrenuj przykładowy model ML. Jako kryterium przyjmij metrykę RMSE mierzoną na zbiorze testowym.",
     "crumbs": [
       "<span class='chapter-number'>3</span>  <span class='chapter-title'>Czyszczenie danych</span>"
+    ]
+  },
+  {
+    "objectID": "03-azure-data-lake.html",
+    "href": "03-azure-data-lake.html",
+    "title": "4  Azure Data Lake",
+    "section": "",
+    "text": "4.1 Wprowadzenie\nCelem zajęć jest zapoznanie się z pracą na danych przechowywanych w chmurze zamiast lokalnych plików.\nDo tej pory pracowaliśmy na danych lokalnie:\nW rzeczywistych systemach dane są przechowywane w chmurze:",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Azure Data Lake</span>"
+    ]
+  },
+  {
+    "objectID": "03-azure-data-lake.html#wprowadzenie",
+    "href": "03-azure-data-lake.html#wprowadzenie",
+    "title": "4  Azure Data Lake",
+    "section": "",
+    "text": "data/yellow_tripdata_2025-01.parquet\n\n\nAzure Data Lake\nAWS S3\nGoogle Cloud Storage",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Azure Data Lake</span>"
+    ]
+  },
+  {
+    "objectID": "03-azure-data-lake.html#co-to-jest-data-lake",
+    "href": "03-azure-data-lake.html#co-to-jest-data-lake",
+    "title": "4  Azure Data Lake",
+    "section": "4.2 Co to jest Data Lake?",
+    "text": "4.2 Co to jest Data Lake?\nData Lake to:\n\nmiejsce przechowywania danych w różnych formatach (np. parquet, csv)\nbrak sztywnego schematu (schema-on-read)\nmożliwość pracy na dużych wolumenach danych\n\nMożliwa struktura Data Lake\n\ncontainer/\n├── raw/      # dane surowe\n├── silver/   # dane przetworzone\n└── gold/     # dane do analizy / dashboardów",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Azure Data Lake</span>"
+    ]
+  },
+  {
+    "objectID": "03-azure-data-lake.html#tworzenie-storage-account",
+    "href": "03-azure-data-lake.html#tworzenie-storage-account",
+    "title": "4  Azure Data Lake",
+    "section": "4.3 Tworzenie Storage Account",
+    "text": "4.3 Tworzenie Storage Account\n\nWejdź na stronę https://portal.azure.com i zaloguj się na swoje konto.\nUtworzenie zasobu - wyszukaj Storage accounts i kliknij Create.\nKonfiguracja\n\n\nResource group: rg-taxi-lab (lub utwórz nową)\nStorage account name: unikalna nazwa (np. taxilake12345)\nRegion: Europe (np. Europe Poland Central)\nPreferred storage type: Azure Blob Storage\n\n\nW zakładce Advanced włącz opcję Enable hierarchical namespace\nUtworzenie Data Lake: Kliknij Review + Create → Create i poczekaj aż zasób zostanie utworzony.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Azure Data Lake</span>"
+    ]
+  },
+  {
+    "objectID": "03-azure-data-lake.html#tworzenie-kontenera-i-upload-danych",
+    "href": "03-azure-data-lake.html#tworzenie-kontenera-i-upload-danych",
+    "title": "4  Azure Data Lake",
+    "section": "4.4 Tworzenie kontenera i upload danych",
+    "text": "4.4 Tworzenie kontenera i upload danych\n\nPrzejdź do kontenerów w Storage Account - Data storage → Containers.\nUtwórz kontener - kliknij: Container i podaj nazwę np. taxi-data.\nUtwórz strukturę folderów - wejdź do kontenera i utwórz foldery:\n\nraw/\nsilver/\ngold/\n\nWgraj dane - wejdź do folderu raw i kliknij upload. Następnie wgraj plik yellow_tripdata_2025-01.parquet",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Azure Data Lake</span>"
+    ]
+  },
+  {
+    "objectID": "03-azure-data-lake.html#dostęp-do-danych-access-key",
+    "href": "03-azure-data-lake.html#dostęp-do-danych-access-key",
+    "title": "4  Azure Data Lake",
+    "section": "4.5 Dostęp do danych (Access Key)",
+    "text": "4.5 Dostęp do danych (Access Key)\n\nW Storage Account przejdź do Security + networking → Access keys\nSkopiuj klucz key1.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Azure Data Lake</span>"
+    ]
+  },
+  {
+    "objectID": "03-azure-data-lake.html#python-odczyt-danych",
+    "href": "03-azure-data-lake.html#python-odczyt-danych",
+    "title": "4  Azure Data Lake",
+    "section": "4.6 Python – odczyt danych",
+    "text": "4.6 Python – odczyt danych\nW pierwszym kroku potrzebujemy mieć zainstalowane następujące biblioteki:\npip install pandas pyarrow fsspec adlfs\nNastępnie możemy uruchomić kod:\nimport pandas as pd\n\naccount_name = \"TWOJA_NAZWA_STORAGE\"\naccount_key = \"TWOJ_KLUCZ\"\n\nfile_path = f\"abfs://taxi-data@{account_name}.dfs.core.windows.net/raw/yellow_tripdata_2025-01.parquet\"\n\ndf = pd.read_parquet(\n    file_path,\n    storage_options={\n        \"account_name\": account_name,\n        \"account_key\": account_key\n    }\n)\n\ndf.head()",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Azure Data Lake</span>"
+    ]
+  },
+  {
+    "objectID": "03-azure-data-lake.html#podstawowa-analiza-danych",
+    "href": "03-azure-data-lake.html#podstawowa-analiza-danych",
+    "title": "4  Azure Data Lake",
+    "section": "4.7 Podstawowa analiza danych",
+    "text": "4.7 Podstawowa analiza danych\nWykonaj poniższe operacje:\n# liczba rekordów\ndf.shape\n\n# średni dystans\ndf[\"trip_distance\"].mean()\n\n# najpopularniejsze godziny\ndf[\"tpep_pickup_datetime\"] = pd.to_datetime(df[\"tpep_pickup_datetime\"])\ndf[\"hour\"] = df[\"tpep_pickup_datetime\"].dt.hour\n\ndf[\"hour\"].value_counts().head()\n\n4.7.1 Zadanie\nPrzetwórz dane i zapisz je w strefie silver.\n\nWczytaj dane z raw\nUsuń rekordy gdzie trip_distance &lt;= 0\nZapisz dane do silver/cleaned.parquet\n\n\n\n4.7.2 Zadanie\n\nOblicz średnią długość przejazdu na godzinę\nZapisz wynik do gold/hour_aggregated.parquet",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Azure Data Lake</span>"
+    ]
+  },
+  {
+    "objectID": "03-azure-data-lake.html#dostęp-do-danych-sas-token",
+    "href": "03-azure-data-lake.html#dostęp-do-danych-sas-token",
+    "title": "4  Azure Data Lake",
+    "section": "4.8 Dostęp do danych (SAS token)",
+    "text": "4.8 Dostęp do danych (SAS token)\nAccess Key:\n\ndaje pełny dostęp do całego konta\njest niebezpieczny w projektach\n\nSAS (Shared Access Signature):\n\ndaje ograniczony dostęp\nmoże wygasnąć\nmoże mieć tylko read/write\n\nTworzenie SAS token:\n\nW Azure przejdź do Storage Account → Containers → taxilake12345\nNastępnie Security + networking → Shared access signature\nZaznacz niezbędne uprawnienia i określ czas ważności\nWygeneruj token\n\nWczytanie danych z SAS token w python:\nimport pandas as pd\n\naccount_name = \"TWOJA_NAZWA_STORAGE\"\nsas_token = \"TWOJ_SAS_TOKEN\"\n\nfile_path = f\"abfs://taxi-data@{account_name}.dfs.core.windows.net/raw/yellow_tripdata_2025-01.parquet\"\n\ndf = pd.read_parquet(\n    file_path,\n    storage_options={\n        \"account_name\": account_name,\n        \"sas_token\": account_key\n    }\n)\n\ndf.head()\n\n4.8.1 Zadanie\nCo się stanie jeśli spróbujemy zapisać plik z wykorzystaniem SAS token bez wymaganych uprawnień?",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Azure Data Lake</span>"
+    ]
+  },
+  {
+    "objectID": "03-azure-data-lake.html#zarządzenie-plikami-z-poziomu-kodu",
+    "href": "03-azure-data-lake.html#zarządzenie-plikami-z-poziomu-kodu",
+    "title": "4  Azure Data Lake",
+    "section": "4.9 Zarządzenie plikami z poziomu kodu",
+    "text": "4.9 Zarządzenie plikami z poziomu kodu\nUsuwanie plików\nfrom adlfs import AzureBlobFileSystem\n\naccount_name = \"TWOJA_NAZWA\"\naccount_key = \"TWOJ_KEY\"\n\nfs = AzureBlobFileSystem(\n    account_name=account_name,\n    account_key=account_key\n)\n\n# ścieżka: container + path\nfile_path = \"taxi-data/silver/cleaned.parquet\"\n\nfs.rm(file_path)\n\nprint(\"Plik usunięty\")\nUsuwanie folderu\nfs.rm(\"taxi-data/silver\", recursive=True)\nSprawdzanie co jest w folderze\nfs.ls(\"taxi-data/raw\")\n\n4.9.1 Zadanie\nStwórz katalog archive i przenieś tam plik silver/cleaned.parquet.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Azure Data Lake</span>"
+    ]
+  },
+  {
+    "objectID": "03-azure-data-lake.html#analiza-kosztów",
+    "href": "03-azure-data-lake.html#analiza-kosztów",
+    "title": "4  Azure Data Lake",
+    "section": "4.10 Analiza kosztów",
+    "text": "4.10 Analiza kosztów\nW Azure płacimy za:\n\nPrzechowywanie danych (GB / miesiąc)\nOperacje (read / write)\nTransfer danych (egress)\n\n\n\n\nCost management\n\n\n\nParquet = mniej danych = niższe koszty\nwiele małych operacji = drożej\nData Lake jest generalnie tani, ale nie „za darmo”\n\nRozwiązania self-hosted: MinIO, Ceph, HDFS.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Azure Data Lake</span>"
     ]
   }
 ]

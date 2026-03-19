@@ -225,3 +225,5 @@ W Azure płacimy za:
 - Parquet = mniej danych = niższe koszty
 - wiele małych operacji = drożej
 - Data Lake jest generalnie tani, ale nie „za darmo”
+
+Rozwiązania self-hosted: MinIO, Ceph, HDFS.
