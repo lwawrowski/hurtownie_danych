@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>3&nbsp; Czyszczenie danych – Hurtownie danych i analityczne metody przetwarzania</title>
+<title>5&nbsp; Azure SQL – Hurtownie danych i analityczne metody przetwarzania</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -64,8 +64,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./03-azure-data-lake.html" rel="next">
-<link href="./01-eda.html" rel="prev">
+<link href="./03-azure-data-lake.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -102,10 +101,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
-<link href="site_libs/countdown-0.6.0/countdown.css" rel="stylesheet">
-
-<script src="site_libs/countdown-0.6.0/countdown.js"></script>
-
 
 
 </head>
@@ -119,7 +114,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./02-data-cleaning.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Czyszczenie danych</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./04-azure-sql.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Azure SQL</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -164,7 +159,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./02-data-cleaning.html" class="sidebar-item-text sidebar-link active">
+  <a href="./02-data-cleaning.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Czyszczenie danych</span></span></a>
   </div>
 </li>
@@ -176,7 +171,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./04-azure-sql.html" class="sidebar-item-text sidebar-link">
+  <a href="./04-azure-sql.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Azure SQL</span></span></a>
   </div>
 </li>
@@ -190,8 +185,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Spis treści</h2>
    
   <ul>
-  <li><a href="#case-study" id="toc-case-study" class="nav-link active" data-scroll-target="#case-study"><span class="header-section-number">3.1</span> Case study</a></li>
-  <li><a href="#zadanie" id="toc-zadanie" class="nav-link" data-scroll-target="#zadanie"><span class="header-section-number">3.2</span> Zadanie</a></li>
+  <li><a href="#schemat-gwiazdy-w-hurtowniach-danych" id="toc-schemat-gwiazdy-w-hurtowniach-danych" class="nav-link active" data-scroll-target="#schemat-gwiazdy-w-hurtowniach-danych"><span class="header-section-number">5.1</span> Schemat gwiazdy w hurtowniach danych</a></li>
+  <li><a href="#zadanie" id="toc-zadanie" class="nav-link" data-scroll-target="#zadanie"><span class="header-section-number">5.2</span> Zadanie</a></li>
+  <li><a href="#baza-danych-sql-w-azure" id="toc-baza-danych-sql-w-azure" class="nav-link" data-scroll-target="#baza-danych-sql-w-azure"><span class="header-section-number">5.3</span> Baza danych SQL w Azure</a></li>
+  <li><a href="#sqlalchemy" id="toc-sqlalchemy" class="nav-link" data-scroll-target="#sqlalchemy"><span class="header-section-number">5.4</span> SQLAlchemy</a>
+  <ul class="collapse">
+  <li><a href="#tworzenie-tabel-z-dataframe" id="toc-tworzenie-tabel-z-dataframe" class="nav-link" data-scroll-target="#tworzenie-tabel-z-dataframe"><span class="header-section-number">5.4.1</span> Tworzenie tabel z DataFrame</a></li>
+  <li><a href="#definicja-tabel-w-sqlalchemy" id="toc-definicja-tabel-w-sqlalchemy" class="nav-link" data-scroll-target="#definicja-tabel-w-sqlalchemy"><span class="header-section-number">5.4.2</span> Definicja tabel w SQLAlchemy</a></li>
+  </ul></li>
+  <li><a href="#zapytania-analityczne" id="toc-zapytania-analityczne" class="nav-link" data-scroll-target="#zapytania-analityczne"><span class="header-section-number">5.5</span> Zapytania analityczne</a>
+  <ul class="collapse">
+  <li><a href="#zadania" id="toc-zadania" class="nav-link" data-scroll-target="#zadania"><span class="header-section-number">5.5.1</span> Zadania</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -200,7 +205,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Czyszczenie danych</span></h1>
+<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Azure SQL</span></h1>
 </div>
 
 
@@ -217,96 +222,205 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Podstawowe przygotowanie zbioru:</p>
+<section id="schemat-gwiazdy-w-hurtowniach-danych" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="schemat-gwiazdy-w-hurtowniach-danych"><span class="header-section-number">5.1</span> Schemat gwiazdy w hurtowniach danych</h2>
+<p>Schemat gwiazdy (ang. <em>Star Schema</em>) jest jednym z najczęściej stosowanych modeli logicznych w projektowaniu hurtowni danych. Jego nazwa pochodzi od charakterystycznego układu tabel, w którym centralnie znajduje się tabela faktów, a wokół niej rozmieszczone są tabele wymiarów, przypominające swoim układem gwiazdę.</p>
+<p>Schemat gwiazdy został opracowany w celu ułatwienia analizy dużych zbiorów danych oraz usprawnienia wykonywania zapytań analitycznych. Jest szczególnie popularny w systemach wspomagania decyzji (DSS – Decision Support Systems) oraz w narzędziach Business Intelligence (BI), gdzie istotna jest szybka analiza danych historycznych oraz generowanie raportów.</p>
+<p>Schemat gwiazdy składa się z dwóch podstawowych elementów:</p>
+<p><strong>Tabela faktów</strong> – jest centralnym elementem schematu. Zawiera dane liczbowe (miary), które podlegają analizie, takie jak:</p>
 <ul>
-<li><p>czyszczenie nazw kolumn - można użyć np. pakietu <a href="https://pyjanitor-devs.github.io/pyjanitor/">pyjanitor</a></p></li>
-<li><p>usuwanie lub uzupełnianie braków danych</p></li>
-<li><p>usuwanie wartości odstających</p></li>
-<li><p>usuwanie duplikatów</p></li>
-<li><p>ujednolicanie lub grupowanie kategorii</p></li>
+<li>wartość sprzedaży,</li>
+<li>liczba sprzedanych produktów,</li>
+<li>przychody,</li>
+<li>koszty.</li>
 </ul>
-<p>Dalsze kroki przetwarzania danych i przygotowanie danych do modelu:</p>
+<p>Tabela faktów zawiera również klucze obce odnoszące się do tabel wymiarów.</p>
+<p><strong>Tabele wymiarów</strong> – otaczają tabelę faktów i zawierają dane opisowe, które umożliwiają analizę faktów według różnych kryteriów. Przykładowe wymiary to:</p>
 <ul>
-<li><p>konwersja typów danych</p></li>
-<li><p>kodowanie danych kategorycznych (one-hot-encoding)</p></li>
-<li><p>normalizacja wartości numerycznych</p></li>
-<li><p>tworzenie nowych cech (feature engineering)</p></li>
-<li><p>podział zbioru</p></li>
+<li>czas (np. dzień, miesiąc, rok),</li>
+<li>produkt (np. nazwa produktu, kategoria),</li>
+<li>klient (np. wiek, lokalizacja),</li>
+<li>lokalizacja (np. miasto, region, kraj).</li>
 </ul>
-<section id="case-study" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="case-study"><span class="header-section-number">3.1</span> Case study</h2>
-<div class="cell">
-<div class="cell-output-display">
-<countdown-timer class="countdown" id="timer_9aa98fa6" minutes="5" seconds="0" update-every="1" tabindex="0" style="right:0;bottom:0;"></countdown-timer>
-</div>
-</div>
-<p>Poniżej znajduje się przykładowy kod przygotowujący dane do modelu uczenia maszynowego. Kod wykorzystuje bibliotekę scikit-learn oraz pipeline przetwarzania danych. Czy zaproponowany sposób czyszczenia danych jest poprawny?</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> OneHotEncoder</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.compose <span class="im">import</span> ColumnTransformer</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> Pipeline</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_parquet(<span class="st">"data/yellow_tripdata_2025-01.parquet"</span>)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># USUWANIE BRAKÓW DANYCH</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.dropna()</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># FEATURE ENGINEERING</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"tpep_pickup_datetime"</span>] <span class="op">=</span> pd.to_datetime(df[<span class="st">"tpep_pickup_datetime"</span>])</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"tpep_dropoff_datetime"</span>] <span class="op">=</span> pd.to_datetime(df[<span class="st">"tpep_dropoff_datetime"</span>])</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"trip_duration_min"</span>] <span class="op">=</span> (</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">"tpep_dropoff_datetime"</span>] <span class="op">-</span> df[<span class="st">"tpep_pickup_datetime"</span>]</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>).dt.total_seconds() <span class="op">/</span> <span class="dv">60</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"pickup_hour"</span>] <span class="op">=</span> df[<span class="st">"tpep_pickup_datetime"</span>].dt.hour</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"speed"</span>] <span class="op">=</span> df[<span class="st">"trip_distance"</span>] <span class="op">/</span> (df[<span class="st">"trip_duration_min"</span>] <span class="op">/</span> <span class="dv">60</span>)</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co"># USUWANIE OUTLIERÓW</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df[(df[<span class="st">"fare_amount"</span>] <span class="op">&gt;</span> <span class="dv">0</span>) <span class="op">&amp;</span> (df[<span class="st">"fare_amount"</span>] <span class="op">&lt;</span> df[<span class="st">"fare_amount"</span>].quantile(<span class="fl">0.99</span>))]</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df[(df[<span class="st">"trip_distance"</span>] <span class="op">&gt;</span> <span class="dv">0</span>) <span class="op">&amp;</span> (df[<span class="st">"trip_distance"</span>] <span class="op">&lt;</span> df[<span class="st">"trip_distance"</span>].quantile(<span class="fl">0.99</span>))]</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df[(df[<span class="st">"trip_duration_min"</span>] <span class="op">&gt;</span> <span class="dv">0</span>) <span class="op">&amp;</span> (df[<span class="st">"trip_duration_min"</span>] <span class="op">&lt;</span> df[<span class="st">"trip_duration_min"</span>].quantile(<span class="fl">0.99</span>))]</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>target <span class="op">=</span> <span class="st">"fare_amount"</span></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df.drop(columns<span class="op">=</span>[target])</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> df[target]</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="co"># STANDARYZACJA</span></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>scaler <span class="op">=</span> StandardScaler()</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>X_scaled <span class="op">=</span> scaler.fit_transform(X.select_dtypes(include<span class="op">=</span><span class="st">"number"</span>))</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="co"># PODZIAŁ TRAIN / </span><span class="al">TEST</span></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(</span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    X_scaled, y,</span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    test_size<span class="op">=</span><span class="fl">0.2</span>,</span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    random_state<span class="op">=</span><span class="dv">42</span></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="co"># PIPELINE</span></span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>numeric_features <span class="op">=</span> [<span class="st">"trip_distance"</span>, <span class="st">"trip_duration_min"</span>, <span class="st">"speed"</span>]</span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>categorical_features <span class="op">=</span> [<span class="st">"VendorID"</span>, <span class="st">"payment_type"</span>, <span class="st">"pickup_hour"</span>]</span>
-<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>preprocessor <span class="op">=</span> ColumnTransformer(</span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>    transformers<span class="op">=</span>[</span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"num"</span>, StandardScaler(), numeric_features),</span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>        (<span class="st">"cat"</span>, OneHotEncoder(), categorical_features)</span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>    ]</span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>pipeline <span class="op">=</span> Pipeline([</span>
-<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>    (<span class="st">"preprocess"</span>, preprocessor)</span>
-<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Tabele wymiarów są zazwyczaj zdenormalizowane, co oznacza, że zawierają więcej danych opisowych w jednej tabeli, aby przyspieszyć zapytania.</p>
+<p>Do głównych zalet schematu gwiazdy należą:</p>
+<ul>
+<li>prostota struktury i łatwość zrozumienia,</li>
+<li>szybkie wykonywanie zapytań analitycznych,</li>
+<li>dobra wydajność przy dużych zbiorach danych,</li>
+<li>łatwość integracji z narzędziami analitycznymi i raportowymi.</li>
+</ul>
 </section>
-<section id="zadanie" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="zadanie"><span class="header-section-number">3.2</span> Zadanie</h2>
-<p>Przygotuj poprawny pipeline przetwarzania danych oraz wytrenuj przykładowy model ML. Jako kryterium przyjmij metrykę RMSE mierzoną na zbiorze testowym.</p>
+<section id="zadanie" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="zadanie"><span class="header-section-number">5.2</span> Zadanie</h2>
+<p>Pobierz dane z Azure Data Lake z folderu <code>silver/cleaned.parquet</code> i przygotuj trzy tabele zawierające następujące kolumny:</p>
+<ul>
+<li><code>dim_time</code>: time_id, tpep_pickup_datetime, hour, weekday, month, year, is_weekend</li>
+<li><code>dim_vendor</code>: vendor_id, vendor_name</li>
+<li><code>fact_trips</code>: time_id, vendor_id, trip_distance, fare_amount, total_amount, trip_duration</li>
+</ul>
+</section>
+<section id="baza-danych-sql-w-azure" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="baza-danych-sql-w-azure"><span class="header-section-number">5.3</span> Baza danych SQL w Azure</h2>
+<ol type="1">
+<li>Na Azure Portal: <code>Create Resource → SQL Database</code></li>
+<li>Do wyboru opcja free lub płatna - w wersji free nie możemy wybrać nazwy bazy danych</li>
+<li>Tworzymy SQL Database Server</li>
+</ol>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="img/sql_server.png" class="img-fluid figure-img"></p>
+<figcaption>SQL Database Server</figcaption>
+</figure>
+</div>
+<ol start="4" type="1">
+<li>Tworzymy SQL Database</li>
+</ol>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="img/sql_database.png" class="img-fluid figure-img"></p>
+<figcaption>SQL Database</figcaption>
+</figure>
+</div>
+<ol start="5" type="1">
+<li>Networking</li>
+</ol>
+<p><img src="img/sql_networking.png" class="img-fluid"></p>
+</section>
+<section id="sqlalchemy" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="sqlalchemy"><span class="header-section-number">5.4</span> SQLAlchemy</h2>
+<p>Do ładowania danych do bazy danych w środowisku Azure wykorzystana zostanie biblioteka SQLAlchemy, która stanowi popularne narzędzie w języku Python służące do komunikacji z relacyjnymi bazami danych. SQLAlchemy umożliwia wykonywanie operacji na bazach danych w sposób bardziej elastyczny i niezależny od konkretnego systemu zarządzania bazą danych.</p>
+<p>Biblioteka SQLAlchemy działa jako warstwa pośrednia pomiędzy aplikacją a bazą danych, pozwalając na tworzenie zapytań SQL przy użyciu składni języka Python. Umożliwia zarówno wykonywanie zapytań SQL bezpośrednio, jak i korzystanie z mechanizmu ORM (Object-Relational Mapping), który pozwala odwzorować tabele bazy danych na obiekty w programie.</p>
+<p>Instalacja: <code>pip install sqlalchemy pyodbc</code></p>
+<p>Połączenie z bazą danych</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sqlalchemy <span class="im">import</span> create_engine</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>server <span class="op">=</span> <span class="st">"twoj-serwer.database.windows.net"</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>database <span class="op">=</span> <span class="st">"taxi-dwh"</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>username <span class="op">=</span> <span class="st">"sqladmin"</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>password <span class="op">=</span> <span class="st">"HASLO"</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>connection_string <span class="op">=</span> (</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"mssql+pyodbc://</span><span class="sc">{</span>username<span class="sc">}</span><span class="ss">:</span><span class="sc">{</span>password<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"@</span><span class="sc">{</span>server<span class="sc">}</span><span class="ss">:1433/</span><span class="sc">{</span>database<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"?driver=ODBC+Driver+18+for+SQL+Server"</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>engine <span class="op">=</span> create_engine(connection_string)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Może być konieczne zainstalowanie sterowników <a href="https://learn.microsoft.com/pl-pl/sql/connect/odbc/download-odbc-driver-for-sql-server?view=sql-server-ver17">ODBC Driver 18 for SQL Server</a>. To czy są zainstalowane można sprawdzić z wykorzystaniem poniższego kodu:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyodbc</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(pyodbc.drivers())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="tworzenie-tabel-z-dataframe" class="level3" data-number="5.4.1">
+<h3 data-number="5.4.1" class="anchored" data-anchor-id="tworzenie-tabel-z-dataframe"><span class="header-section-number">5.4.1</span> Tworzenie tabel z DataFrame</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dim_time.to_sql(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"dim_time"</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    engine,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    if_exists<span class="op">=</span><span class="st">"replace"</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span><span class="va">False</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>dim_vendor.to_sql(</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"dim_vendor"</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    engine,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    if_exists<span class="op">=</span><span class="st">"replace"</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span><span class="va">False</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>fact_trips.to_sql(</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"fact_trips"</span>,</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    engine,</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    if_exists<span class="op">=</span><span class="st">"replace"</span>,</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span><span class="va">False</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="definicja-tabel-w-sqlalchemy" class="level3" data-number="5.4.2">
+<h3 data-number="5.4.2" class="anchored" data-anchor-id="definicja-tabel-w-sqlalchemy"><span class="header-section-number">5.4.2</span> Definicja tabel w SQLAlchemy</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sqlalchemy <span class="im">import</span> (</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    Column,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    Integer,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    Float,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    DateTime,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    ForeignKey,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    String</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sqlalchemy.orm <span class="im">import</span> declarative_base</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>Base <span class="op">=</span> declarative_base()</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> DimTime(Base):</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    __tablename__ <span class="op">=</span> <span class="st">"dim_time"</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    time_id <span class="op">=</span> Column(Integer, primary_key<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    pickup_datetime <span class="op">=</span> Column(DateTime)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    hour <span class="op">=</span> Column(Integer)</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    weekday <span class="op">=</span> Column(Integer)</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    month <span class="op">=</span> Column(Integer)</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    year <span class="op">=</span> Column(Integer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Tabela faktów</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> FactTrips(Base):</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    __tablename__ <span class="op">=</span> <span class="st">"fact_trips"</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    trip_id <span class="op">=</span> Column(Integer, primary_key<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    time_id <span class="op">=</span> Column(</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        Integer,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        ForeignKey(<span class="st">"dim_time.time_id"</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    vendor_id <span class="op">=</span> Column(</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        Integer,</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        ForeignKey(<span class="st">"dim_vendor.vendor_id"</span>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    trip_distance <span class="op">=</span> Column(Float)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    fare_amount <span class="op">=</span> Column(Float)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    total_amount <span class="op">=</span> Column(Float)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Tworzenie tabel</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>Base.metadata.create_all(engine)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="zapytania-analityczne" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="zapytania-analityczne"><span class="header-section-number">5.5</span> Zapytania analityczne</h2>
+<p>Sprawdzenie czy dane są w bazie</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>query <span class="op">=</span> <span class="st">"SELECT COUNT(*) FROM fact_trips"</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>pd.read_sql(query, engine)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Średnia cena wg godziny</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>query <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="st">SELECT</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="st">    t.hour,</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="st">    AVG(f.fare_amount) AS avg_fare</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="st">FROM fact_trips f</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="st">JOIN dim_time t</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="st">    ON f.time_id = t.time_id</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="st">GROUP BY t.hour</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="st">ORDER BY t.hour</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> pd.read_sql(query, engine)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>result.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="zadania" class="level3" data-number="5.5.1">
+<h3 data-number="5.5.1" class="anchored" data-anchor-id="zadania"><span class="header-section-number">5.5.1</span> Zadania</h3>
+<p>Znajdź</p>
+<ol type="1">
+<li>godzinę z największą liczbą kursów</li>
+<li>średnią odległość wg dnia tygodnia</li>
+<li>vendor z największym przychodem</li>
+</ol>
+<p>Zapoznaj się z odpowiednimi funkcjami z biblioteki SQLAlchemy i przekonwertuj powyższe zapytania na czysty python.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -729,14 +843,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./01-eda.html" class="pagination-link" aria-label="Explanatory Data Analysis">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Explanatory Data Analysis</span></span>
+      <a href="./03-azure-data-lake.html" class="pagination-link" aria-label="Azure Data Lake">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Azure Data Lake</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./03-azure-data-lake.html" class="pagination-link" aria-label="Azure Data Lake">
-        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Azure Data Lake</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->

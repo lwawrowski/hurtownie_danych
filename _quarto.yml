@@ -11,6 +11,7 @@ book:
     - 01-eda.qmd
     - 02-data-cleaning.qmd
     - 03-azure-data-lake.qmd
+    - 04-azure-sql.qmd
     
 format:
   html:

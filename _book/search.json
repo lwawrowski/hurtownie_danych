@@ -268,5 +268,65 @@
     "crumbs": [
       "<span class='chapter-number'>4</span>  <span class='chapter-title'>Azure Data Lake</span>"
     ]
+  },
+  {
+    "objectID": "04-azure-sql.html",
+    "href": "04-azure-sql.html",
+    "title": "5  Azure SQL",
+    "section": "",
+    "text": "5.1 Schemat gwiazdy w hurtowniach danych\nSchemat gwiazdy (ang. Star Schema) jest jednym z najczęściej stosowanych modeli logicznych w projektowaniu hurtowni danych. Jego nazwa pochodzi od charakterystycznego układu tabel, w którym centralnie znajduje się tabela faktów, a wokół niej rozmieszczone są tabele wymiarów, przypominające swoim układem gwiazdę.\nSchemat gwiazdy został opracowany w celu ułatwienia analizy dużych zbiorów danych oraz usprawnienia wykonywania zapytań analitycznych. Jest szczególnie popularny w systemach wspomagania decyzji (DSS – Decision Support Systems) oraz w narzędziach Business Intelligence (BI), gdzie istotna jest szybka analiza danych historycznych oraz generowanie raportów.\nSchemat gwiazdy składa się z dwóch podstawowych elementów:\nTabela faktów – jest centralnym elementem schematu. Zawiera dane liczbowe (miary), które podlegają analizie, takie jak:\nTabela faktów zawiera również klucze obce odnoszące się do tabel wymiarów.\nTabele wymiarów – otaczają tabelę faktów i zawierają dane opisowe, które umożliwiają analizę faktów według różnych kryteriów. Przykładowe wymiary to:\nTabele wymiarów są zazwyczaj zdenormalizowane, co oznacza, że zawierają więcej danych opisowych w jednej tabeli, aby przyspieszyć zapytania.\nDo głównych zalet schematu gwiazdy należą:",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Azure SQL</span>"
+    ]
+  },
+  {
+    "objectID": "04-azure-sql.html#schemat-gwiazdy-w-hurtowniach-danych",
+    "href": "04-azure-sql.html#schemat-gwiazdy-w-hurtowniach-danych",
+    "title": "5  Azure SQL",
+    "section": "",
+    "text": "wartość sprzedaży,\nliczba sprzedanych produktów,\nprzychody,\nkoszty.\n\n\n\n\nczas (np. dzień, miesiąc, rok),\nprodukt (np. nazwa produktu, kategoria),\nklient (np. wiek, lokalizacja),\nlokalizacja (np. miasto, region, kraj).\n\n\n\n\nprostota struktury i łatwość zrozumienia,\nszybkie wykonywanie zapytań analitycznych,\ndobra wydajność przy dużych zbiorach danych,\nłatwość integracji z narzędziami analitycznymi i raportowymi.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Azure SQL</span>"
+    ]
+  },
+  {
+    "objectID": "04-azure-sql.html#zadanie",
+    "href": "04-azure-sql.html#zadanie",
+    "title": "5  Azure SQL",
+    "section": "5.2 Zadanie",
+    "text": "5.2 Zadanie\nPobierz dane z Azure Data Lake z folderu silver/cleaned.parquet i przygotuj trzy tabele zawierające następujące kolumny:\n\ndim_time: time_id, tpep_pickup_datetime, hour, weekday, month, year, is_weekend\ndim_vendor: vendor_id, vendor_name\nfact_trips: time_id, vendor_id, trip_distance, fare_amount, total_amount, trip_duration",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Azure SQL</span>"
+    ]
+  },
+  {
+    "objectID": "04-azure-sql.html#baza-danych-sql-w-azure",
+    "href": "04-azure-sql.html#baza-danych-sql-w-azure",
+    "title": "5  Azure SQL",
+    "section": "5.3 Baza danych SQL w Azure",
+    "text": "5.3 Baza danych SQL w Azure\n\nNa Azure Portal: Create Resource → SQL Database\nDo wyboru opcja free lub płatna - w wersji free nie możemy wybrać nazwy bazy danych\nTworzymy SQL Database Server\n\n\n\n\nSQL Database Server\n\n\n\nTworzymy SQL Database\n\n\n\n\nSQL Database\n\n\n\nNetworking",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Azure SQL</span>"
+    ]
+  },
+  {
+    "objectID": "04-azure-sql.html#sqlalchemy",
+    "href": "04-azure-sql.html#sqlalchemy",
+    "title": "5  Azure SQL",
+    "section": "5.4 SQLAlchemy",
+    "text": "5.4 SQLAlchemy\nDo ładowania danych do bazy danych w środowisku Azure wykorzystana zostanie biblioteka SQLAlchemy, która stanowi popularne narzędzie w języku Python służące do komunikacji z relacyjnymi bazami danych. SQLAlchemy umożliwia wykonywanie operacji na bazach danych w sposób bardziej elastyczny i niezależny od konkretnego systemu zarządzania bazą danych.\nBiblioteka SQLAlchemy działa jako warstwa pośrednia pomiędzy aplikacją a bazą danych, pozwalając na tworzenie zapytań SQL przy użyciu składni języka Python. Umożliwia zarówno wykonywanie zapytań SQL bezpośrednio, jak i korzystanie z mechanizmu ORM (Object-Relational Mapping), który pozwala odwzorować tabele bazy danych na obiekty w programie.\nInstalacja: pip install sqlalchemy pyodbc\nPołączenie z bazą danych\nfrom sqlalchemy import create_engine\n\nserver = \"twoj-serwer.database.windows.net\"\ndatabase = \"taxi-dwh\"\nusername = \"sqladmin\"\npassword = \"HASLO\"\n\nconnection_string = (\n    f\"mssql+pyodbc://{username}:{password}\"\n    f\"@{server}:1433/{database}\"\n    \"?driver=ODBC+Driver+18+for+SQL+Server\"\n)\n\nengine = create_engine(connection_string)\nMoże być konieczne zainstalowanie sterowników ODBC Driver 18 for SQL Server. To czy są zainstalowane można sprawdzić z wykorzystaniem poniższego kodu:\nimport pyodbc\n\nprint(pyodbc.drivers())\n\n5.4.1 Tworzenie tabel z DataFrame\ndim_time.to_sql(\n    \"dim_time\",\n    engine,\n    if_exists=\"replace\",\n    index=False\n)\n\ndim_vendor.to_sql(\n    \"dim_vendor\",\n    engine,\n    if_exists=\"replace\",\n    index=False\n)\n\nfact_trips.to_sql(\n    \"fact_trips\",\n    engine,\n    if_exists=\"replace\",\n    index=False\n)\n\n\n5.4.2 Definicja tabel w SQLAlchemy\nfrom sqlalchemy import (\n    Column,\n    Integer,\n    Float,\n    DateTime,\n    ForeignKey,\n    String\n)\n\nfrom sqlalchemy.orm import declarative_base\n\nBase = declarative_base()\n\n\nclass DimTime(Base):\n\n    __tablename__ = \"dim_time\"\n\n    time_id = Column(Integer, primary_key=True)\n\n    pickup_datetime = Column(DateTime)\n\n    hour = Column(Integer)\n    weekday = Column(Integer)\n    month = Column(Integer)\n    year = Column(Integer)\nTabela faktów\nclass FactTrips(Base):\n\n    __tablename__ = \"fact_trips\"\n\n    trip_id = Column(Integer, primary_key=True)\n\n    time_id = Column(\n        Integer,\n        ForeignKey(\"dim_time.time_id\")\n    )\n\n    vendor_id = Column(\n        Integer,\n        ForeignKey(\"dim_vendor.vendor_id\")\n    )\n\n    trip_distance = Column(Float)\n\n    fare_amount = Column(Float)\n\n    total_amount = Column(Float)\nTworzenie tabel\nBase.metadata.create_all(engine)",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Azure SQL</span>"
+    ]
+  },
+  {
+    "objectID": "04-azure-sql.html#zapytania-analityczne",
+    "href": "04-azure-sql.html#zapytania-analityczne",
+    "title": "5  Azure SQL",
+    "section": "5.5 Zapytania analityczne",
+    "text": "5.5 Zapytania analityczne\nSprawdzenie czy dane są w bazie\nquery = \"SELECT COUNT(*) FROM fact_trips\"\n\npd.read_sql(query, engine)\nŚrednia cena wg godziny\nquery = \"\"\"\nSELECT\n    t.hour,\n    AVG(f.fare_amount) AS avg_fare\nFROM fact_trips f\nJOIN dim_time t\n    ON f.time_id = t.time_id\nGROUP BY t.hour\nORDER BY t.hour\n\"\"\"\n\nresult = pd.read_sql(query, engine)\n\nresult.head()\n\n5.5.1 Zadania\nZnajdź\n\ngodzinę z największą liczbą kursów\nśrednią odległość wg dnia tygodnia\nvendor z największym przychodem\n\nZapoznaj się z odpowiednimi funkcjami z biblioteki SQLAlchemy i przekonwertuj powyższe zapytania na czysty python.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Azure SQL</span>"
+    ]
   }
 ]
