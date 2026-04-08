@@ -1,0 +1,258 @@
+# MLFlow
+
+W rzeczywistych projektach uczenia maszynowego liczba przeprowadzanych eksperymentów bardzo szybko rośnie. Różne wersje danych, modele, parametry oraz procedury przetwarzania powodują, że ręczne zarządzanie wynikami staje się niewystarczające. Szczególnie istotna staje się możliwość odtworzenia eksperymentu, porównania wyników oraz udokumentowania procesu trenowania modelu.
+
+MLflow stanowi jedno z najczęściej wykorzystywanych narzędzi wspierających proces zarządzania eksperymentami w projektach analitycznych. Umożliwia ono systematyczne zapisywanie parametrów modeli, metryk jakości, artefaktów oraz samych modeli. Dzięki temu możliwe jest śledzenie historii eksperymentów oraz wybór najlepszego rozwiązania w sposób oparty na danych.
+
+W niniejszych zajęciach studenci nie tylko wykonają podstawowe eksperymenty, ale również poznają techniki pozwalające organizować większą liczbę eksperymentów oraz integrować MLflow z pipeline’ami uczenia maszynowego.
+
+## Konfiguracja eksperymentu
+
+Na początku definiujemy nazwę eksperymentu MLflow. W większych projektach jest to istotne, ponieważ umożliwia logiczne grupowanie eksperymentów.
+
+```python
+import mlflow
+
+mlflow.set_experiment(
+    "wine_classification_pipeline"
+)
+```
+
+Ustawienie nazwy eksperymentu pozwala uniknąć przypadkowego zapisywania wyników w domyślnym eksperymencie.
+
+### Zadanie
+
+Utwórz własny eksperyment MLflow o nazwie:
+
+```text
+wine_<nazwisko>
+```
+
+Sprawdź w interfejsie MLflow, czy eksperyment został utworzony.
+
+## Pipeline przetwarzania danych
+
+W praktyce modele rzadko są trenowane bez preprocessing’u. Dlatego wykorzystamy pipeline składający się z:
+
+* standaryzacji danych
+* modelu klasyfikacyjnego
+
+```python
+import pandas as pd
+
+from sklearn.datasets import load_wine
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestClassifier
+
+data = load_wine()
+
+X = pd.DataFrame(
+    data.data,
+    columns=data.feature_names
+)
+
+y = data.target
+```
+
+Tworzenie pipeline
+
+```python
+pipeline = Pipeline([
+    ("scaler", StandardScaler()),
+    ("model", RandomForestClassifier())
+])
+```
+
+Pipeline pozwala zachować spójność preprocessing’u oraz modelu, co ma kluczowe znaczenie w środowisku produkcyjnym.
+
+### Zadanie
+
+Wyświetl strukturę pipeline i sprawdź:
+
+* jakie kroki zawiera pipeline
+* jakie są nazwy komponentów
+
+## Podział danych
+
+```python
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.2,
+    random_state=42
+)
+```
+
+## Automatyczne eksperymenty (Grid-like)
+
+Zamiast ręcznie uruchamiać eksperymenty, zdefiniujemy przestrzeń parametrów.
+
+```python
+param_grid = {
+    "model__n_estimators": [50, 100],
+    "model__max_depth": [None, 5]
+}
+```
+
+### Zadanie 
+
+Policz liczbę możliwych kombinacji parametrów. Zastanów się, jak liczba eksperymentów rośnie wraz z liczbą parametrów.
+
+## Iteracyjne trenowanie modeli
+
+W tej części wykonamy wiele eksperymentów w sposób automatyczny.
+
+```python
+from sklearn.metrics import accuracy_score
+from itertools import product
+
+keys = param_grid.keys()
+
+values = param_grid.values()
+
+for combination in product(*values):
+
+    params = dict(zip(keys, combination))
+
+    with mlflow.start_run():
+
+        pipeline.set_params(**params)
+
+        pipeline.fit(
+            X_train,
+            y_train
+        )
+
+        y_pred = pipeline.predict(
+            X_test
+        )
+
+        accuracy = accuracy_score(
+            y_test,
+            y_pred
+        )
+
+        mlflow.log_params(params)
+
+        mlflow.log_metric(
+            "accuracy",
+            accuracy
+        )
+```
+
+### Zadanie
+
+W MLflow UI:
+
+* porównaj eksperymenty
+* znajdź najlepszą konfigurację
+* zapisz jej parametry
+
+## Nested runs (eksperyment nadrzędny)
+
+Nested runs pozwalają organizować eksperymenty w strukturę hierarchiczną. Jest to szczególnie przydatne podczas strojenia parametrów.
+
+```python
+with mlflow.start_run(run_name="parent_run"):
+
+    for combination in product(*values):
+
+        params = dict(zip(keys, combination))
+
+        with mlflow.start_run(
+            nested=True
+        ):
+
+            pipeline.set_params(
+                **params
+            )
+
+            pipeline.fit(
+                X_train,
+                y_train
+            )
+
+            y_pred = pipeline.predict(
+                X_test
+            )
+
+            accuracy = accuracy_score(
+                y_test,
+                y_pred
+            )
+
+            mlflow.log_params(
+                params
+            )
+
+            mlflow.log_metric(
+                "accuracy",
+                accuracy
+            )
+```
+
+### Zadanie
+
+Sprawdź w MLflow UI:
+
+* jak wyglądają nested runs
+* ile eksperymentów znajduje się wewnątrz eksperymentu nadrzędnego
+
+## Logowanie modelu z sygnaturą
+
+W tej części zapiszemy model wraz z informacją o strukturze danych wejściowych.
+
+```python
+import mlflow.sklearn
+from mlflow.models import infer_signature
+
+pipeline.fit(
+    X_train,
+    y_train
+)
+
+signature = infer_signature(
+    X_train,
+    pipeline.predict(X_train)
+)
+
+with mlflow.start_run():
+
+    mlflow.sklearn.log_model(
+        pipeline,
+        "wine_model",
+        signature=signature
+    )
+```
+
+Sygnatura modelu określa strukturę danych wejściowych oraz wyjściowych i jest szczególnie istotna podczas wdrażania modelu.
+
+### Zadanie 
+
+Sprawdź zapisany model w MLflow. Odpowiedz:
+
+* jakie informacje zawiera sygnatura modelu
+* dlaczego jest istotna w środowisku produkcyjnym
+
+### Zadanie 
+
+Dodaj:
+
+* metrykę `precision`
+* metrykę `recall`
+
+```python
+from sklearn.metrics import precision_score
+from sklearn.metrics import recall_score
+```
+
+Zaloguj wszystkie metryki do MLflow.
+
+Wygeneruj:
+
+* confusion matrix
+* zapisz ją jako obraz
+* zaloguj jako artefakt
