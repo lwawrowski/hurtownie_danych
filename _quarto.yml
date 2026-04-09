@@ -12,6 +12,7 @@ book:
     - 02-data-cleaning.qmd
     - 03-azure-data-lake.qmd
     - 04-azure-sql.qmd
+    - 05-mlflow.qmd
     
 format:
   html:
