@@ -328,5 +328,105 @@
     "crumbs": [
       "<span class='chapter-number'>5</span>  <span class='chapter-title'>Azure SQL</span>"
     ]
+  },
+  {
+    "objectID": "05-mlflow.html",
+    "href": "05-mlflow.html",
+    "title": "6  MLflow",
+    "section": "",
+    "text": "6.1 Instalacja\nW rzeczywistych projektach uczenia maszynowego liczba przeprowadzanych eksperymentów bardzo szybko rośnie. Różne wersje danych, modele, parametry oraz procedury przetwarzania powodują, że ręczne zarządzanie wynikami staje się niewystarczające. Szczególnie istotna staje się możliwość odtworzenia eksperymentu, porównania wyników oraz udokumentowania procesu trenowania modelu.\nMLflow stanowi jedno z najczęściej wykorzystywanych narzędzi wspierających proces zarządzania eksperymentami w projektach analitycznych. Umożliwia ono systematyczne zapisywanie parametrów modeli, metryk jakości, artefaktów oraz samych modeli. Dzięki temu możliwe jest śledzenie historii eksperymentów oraz wybór najlepszego rozwiązania w sposób oparty na danych.\nPrzed rozpoczęciem pracy należy upewnić się, że w środowisku Python zainstalowane są wymagane biblioteki. W tym celu należy uruchomić poniższe polecenie w terminalu lub konsoli systemowej.\nBiblioteka MLflow umożliwia rejestrowanie eksperymentów, natomiast scikit-learn będzie wykorzystywana do trenowania modeli uczenia maszynowego. Pandas posłuży do pracy z danymi, a matplotlib umożliwi tworzenie wykresów.\nPo zakończeniu instalacji należy uruchomić interfejs użytkownika MLflow. W tym celu w terminalu należy wpisać polecenie:\nPo uruchomieniu usługi należy otworzyć przeglądarkę internetową i przejść pod adres http://127.0.0.1:5000. W tym miejscu będzie dostępny interfejs umożliwiający przeglądanie zapisanych eksperymentów.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>MLflow</span>"
+    ]
+  },
+  {
+    "objectID": "05-mlflow.html#instalacja",
+    "href": "05-mlflow.html#instalacja",
+    "title": "6  MLflow",
+    "section": "",
+    "text": "pip install mlflow scikit-learn pandas matplotlib\n\n\nmlflow ui",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>MLflow</span>"
+    ]
+  },
+  {
+    "objectID": "05-mlflow.html#konfiguracja-eksperymentu",
+    "href": "05-mlflow.html#konfiguracja-eksperymentu",
+    "title": "6  MLflow",
+    "section": "6.2 Konfiguracja eksperymentu",
+    "text": "6.2 Konfiguracja eksperymentu\nNa początku definiujemy nazwę eksperymentu MLflow. W większych projektach jest to istotne, ponieważ umożliwia logiczne grupowanie eksperymentów.\nimport mlflow\n\nmlflow.set_experiment(\n    \"house_pipeline\"\n)\nUstawienie nazwy eksperymentu pozwala uniknąć przypadkowego zapisywania wyników w domyślnym eksperymencie.\n\n6.2.1 Zadanie\nUtwórz własny eksperyment MLflow o nazwie:\nhouse_&lt;nazwisko&gt;\nSprawdź w interfejsie MLflow, czy eksperyment został utworzony.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>MLflow</span>"
+    ]
+  },
+  {
+    "objectID": "05-mlflow.html#pipeline-przetwarzania-danych",
+    "href": "05-mlflow.html#pipeline-przetwarzania-danych",
+    "title": "6  MLflow",
+    "section": "6.3 Pipeline przetwarzania danych",
+    "text": "6.3 Pipeline przetwarzania danych\nW praktyce modele rzadko są trenowane bez preprocessing’u. Dlatego wykorzystamy pipeline składający się z:\n\nstandaryzacji danych\nmodelu regresji\n\nimport pandas as pd\n\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.ensemble import RandomForestRegressor\nfrom sklearn.datasets import fetch_california_housing\n\ndata = fetch_california_housing()\n\nX = pd.DataFrame(\n    data.data,\n    columns=data.feature_names\n)\n\ny = data.target\nTworzenie pipeline\npipeline = Pipeline([\n    (\"scaler\", StandardScaler()),\n    (\"model\", RandomForestRegressor())\n])\nPipeline pozwala zachować spójność preprocessing’u oraz modelu, co ma kluczowe znaczenie w środowisku produkcyjnym.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>MLflow</span>"
+    ]
+  },
+  {
+    "objectID": "05-mlflow.html#podział-danych",
+    "href": "05-mlflow.html#podział-danych",
+    "title": "6  MLflow",
+    "section": "6.4 Podział danych",
+    "text": "6.4 Podział danych\nfrom sklearn.model_selection import train_test_split\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X,\n    y,\n    test_size=0.2,\n    random_state=42\n)",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>MLflow</span>"
+    ]
+  },
+  {
+    "objectID": "05-mlflow.html#automatyczne-eksperymenty",
+    "href": "05-mlflow.html#automatyczne-eksperymenty",
+    "title": "6  MLflow",
+    "section": "6.5 Automatyczne eksperymenty",
+    "text": "6.5 Automatyczne eksperymenty\nZamiast ręcznie uruchamiać eksperymenty, zdefiniujemy przestrzeń parametrów.\nparam_grid = {\n    \"model__n_estimators\": [50, 100],\n    \"model__max_depth\": [None, 5]\n}\n\n6.5.1 Zadanie\nPolicz liczbę możliwych kombinacji parametrów. Zastanów się, jak liczba eksperymentów rośnie wraz z liczbą parametrów.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>MLflow</span>"
+    ]
+  },
+  {
+    "objectID": "05-mlflow.html#iteracyjne-trenowanie-modeli",
+    "href": "05-mlflow.html#iteracyjne-trenowanie-modeli",
+    "title": "6  MLflow",
+    "section": "6.6 Iteracyjne trenowanie modeli",
+    "text": "6.6 Iteracyjne trenowanie modeli\nW tej części wykonamy wiele eksperymentów w sposób automatyczny.\nfrom sklearn.metrics import mean_squared_error\nfrom itertools import product\n\nkeys = param_grid.keys()\n\nvalues = param_grid.values()\n\nfor combination in product(*values):\n\n    params = dict(zip(keys, combination))\n\n    with mlflow.start_run():\n\n        pipeline.set_params(**params)\n\n        pipeline.fit(\n            X_train,\n            y_train\n        )\n\n        y_pred = pipeline.predict(\n            X_test\n        )\n\n        mse = mean_squared_error(\n            y_test,\n            y_pred\n        )\n\n        mlflow.log_params(params)\n\n        mlflow.log_metric(\n            \"mse\",\n            mse\n        )\n\n6.6.1 Zadanie\nW MLflow UI:\n\nporównaj eksperymenty\nznajdź najlepszą konfigurację\n\nDodaj do kodu wywołanie funkcji mlflow.sklearn.autolog() - co się zmieniło po uruchomieniu?",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>MLflow</span>"
+    ]
+  },
+  {
+    "objectID": "05-mlflow.html#nested-runs-eksperyment-nadrzędny",
+    "href": "05-mlflow.html#nested-runs-eksperyment-nadrzędny",
+    "title": "6  MLflow",
+    "section": "6.7 Nested runs (eksperyment nadrzędny)",
+    "text": "6.7 Nested runs (eksperyment nadrzędny)\nNested runs pozwalają organizować eksperymenty w strukturę hierarchiczną. Jest to szczególnie przydatne podczas strojenia parametrów.\nwith mlflow.start_run(run_name=\"parent_run\"):\n\n    for combination in product(*values):\n\n        params = dict(zip(keys, combination))\n\n        with mlflow.start_run(\n            nested=True\n        ):\n\n            pipeline.set_params(\n                **params\n            )\n\n            pipeline.fit(\n                X_train,\n                y_train\n            )\n\n            y_pred = pipeline.predict(\n                X_test\n            )\n\n            mse = mean_squared_error(\n                y_test,\n                y_pred\n            )\n    \n            mlflow.log_params(params)\n    \n            mlflow.log_metric(\n                \"mse\",\n                mse\n            )\n\n6.7.1 Zadanie\nSprawdź w MLflow UI:\n\njak wyglądają nested runs\nile eksperymentów znajduje się wewnątrz eksperymentu nadrzędnego\n\nZastąp pętlę w powyższym kodzie na GridSearchCV.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>MLflow</span>"
+    ]
+  },
+  {
+    "objectID": "05-mlflow.html#logowanie-modelu-z-sygnaturą",
+    "href": "05-mlflow.html#logowanie-modelu-z-sygnaturą",
+    "title": "6  MLflow",
+    "section": "6.8 Logowanie modelu z sygnaturą",
+    "text": "6.8 Logowanie modelu z sygnaturą\nW tej części zapiszemy model wraz z informacją o strukturze danych wejściowych.\nimport mlflow.sklearn\nfrom mlflow.models import infer_signature\n\npipeline.fit(\n    X_train,\n    y_train\n)\n\nsignature = infer_signature(\n    X_train,\n    pipeline.predict(X_train)\n)\n\nwith mlflow.start_run():\n\n    mlflow.sklearn.log_model(\n        pipeline,\n        \"house_model\",\n        signature=signature\n    )\nSygnatura modelu określa strukturę danych wejściowych oraz wyjściowych i jest szczególnie istotna podczas wdrażania modelu.\n\n6.8.1 Zadanie\nSprawdź zapisany model w MLflow. Odpowiedz:\n\njakie informacje zawiera sygnatura modelu\ndlaczego jest istotna w środowisku produkcyjnym\n\nCzy zapisany model jest tym z najlepszą metryką? Popraw kod, tak aby zapisywać najlepszy model w sposób automatyczny.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>MLflow</span>"
+    ]
+  },
+  {
+    "objectID": "05-mlflow.html#uruchamianie-mlflow-w-architekturze-chmurowej",
+    "href": "05-mlflow.html#uruchamianie-mlflow-w-architekturze-chmurowej",
+    "title": "6  MLflow",
+    "section": "6.9 Uruchamianie MLFlow w architekturze chmurowej",
+    "text": "6.9 Uruchamianie MLFlow w architekturze chmurowej\nMLflow może działać jako współdzielona aplikacja do zarządzania modelami.\nPopularne rozwiązania\nDeploying MLflow to Azure",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>MLflow</span>"
+    ]
   }
 ]
