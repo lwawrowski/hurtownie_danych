@@ -13,6 +13,7 @@ book:
     - 03-azure-data-lake.qmd
     - 04-azure-sql.qmd
     - 05-mlflow.qmd
+    - 06-prefect.qmd
     
 format:
   html:

@@ -1,0 +1,346 @@
+# Orkiestracja ETL
+
+W poprzednim rozdziale wykorzystaliśmy narzędzie MLflow do zarządzania eksperymentami uczenia maszynowego. Modele były trenowane lokalnie, a ich parametry oraz metryki zapisywane w systemie śledzenia eksperymentów. Choć takie podejście jest wystarczające w małych projektach, w rzeczywistych systemach produkcyjnych proces trenowania modelu stanowi jedynie część większego pipeline’u przetwarzania danych.
+
+Typowy pipeline uczenia maszynowego obejmuje wiele etapów, takich jak pobieranie danych, ich walidacja, przygotowanie zbioru treningowego, trenowanie modelu oraz zapis wyników. Procesy te powinny być wykonywane w sposób kontrolowany, powtarzalny oraz możliwy do monitorowania. W praktyce realizuje się to przy użyciu narzędzi orkiestracji workflow.
+
+## Prefect
+
+Jednym z popularnych narzędzi tego typu jest [Prefect](https://www.prefect.io/). Prefect umożliwia definiowanie pipeline’ów jako zestawu zależnych od siebie zadań (tasków), które są wykonywane w ramach przepływu (flow). Dzięki temu możliwe jest automatyczne uruchamianie pipeline’ów, monitorowanie ich przebiegu oraz obsługa błędów.
+
+W przeciwieństwie do tradycyjnych skryptów, pipeline zbudowany w Prefect pozwala na kontrolowanie zależności między zadaniami, automatyczne ponawianie operacji w przypadku błędów oraz monitorowanie wykonania całego procesu. Prefect umożliwia także łatwą integrację z narzędziami analitycznymi, takimi jak MLflow.
+
+W niniejszym laboratorium pipeline będzie składał się z następujących etapów:
+
+1. Wczytanie danych
+2. Walidacja danych
+3. Podział danych
+4. Trenowanie modelu
+5. Zapis metryk w MLflow
+
+Zainstaluj wymagane biblioteki:
+
+```bash
+pip install prefect mlflow scikit-learn pandas matplotlib
+```
+
+### Zadanie 1
+
+Sprawdź wersję Prefect:
+
+```bash
+prefect version
+```
+
+Uruchom również MLflow UI:
+
+```bash
+mlflow ui
+```
+
+Otwórz w przeglądarce [http://127.0.0.1:5000](http://127.0.0.1:5000).
+
+## Flow i task w Prefect
+
+Prefect także dysponuje interfejsem graficznym, który można uruchomić za pomocą komendy:
+
+```bash
+prefect server start
+```
+
+Interfejs jest dostępny pod adresem [http://127.0.0.1:4200](http://127.0.0.1:4200)
+
+Na początek przeanalizujemy jak wygląda ogólny schemat działania Prefect.
+
+```python
+from prefect import task, flow
+
+@task
+def hello():
+    print("Hello Prefect")
+
+@flow
+def my_flow():
+    hello()
+
+my_flow()
+```
+
+Dekorator `@task` w Prefect służy do oznaczania funkcji jako pojedynczego zadania (tasku), czyli elementarnej jednostki pracy w pipeline przetwarzania danych. Funkcja oznaczona tym dekoratorem przestaje być traktowana jako zwykła funkcja Pythona, a staje się zarządzanym zadaniem, którego wykonanie może być monitorowane, logowane oraz w razie potrzeby automatycznie ponawiane. Zadania stanowią logiczne kroki pipeline’u, takie jak wczytanie danych, ich walidacja, podział na zbiory treningowe czy trenowanie modelu. Prefect śledzi czas wykonania każdego zadania, jego status oraz ewentualne błędy, co znacząco ułatwia diagnostykę problemów i analizę wydajności całego procesu. Dzięki parametrom dekoratora `@task` można dodatkowo konfigurować zachowanie zadania, na przykład określając liczbę prób ponownego wykonania (retry), opóźnienie między próbami czy sposób zapisywania wyników.
+
+Dekorator `@flow` służy do definiowania przepływu pracy (flow), czyli kompletnego pipeline’u składającego się z wielu zależnych od siebie zadań. Funkcja oznaczona jako `@flow` określa logikę wykonania pipeline’u oraz kolejność wywoływania poszczególnych tasków. Flow pełni rolę nadrzędnego kontrolera, który zarządza zależnościami między zadaniami, przekazywaniem danych pomiędzy nimi oraz monitorowaniem całego procesu. W praktyce oznacza to, że `@flow` opisuje pełny scenariusz przetwarzania danych — od ich pobrania aż do uzyskania końcowego rezultatu, takiego jak wytrenowany model lub zapisane metryki. Prefect traktuje każde uruchomienie flow jako osobny proces, który można obserwować w interfejsie użytkownika, analizować pod kątem wydajności oraz uruchamiać wielokrotnie z różnymi parametrami.
+
+## Zbiór danych
+
+W ćwiczeniu wykorzystany zostanie zbiór **California Housing**, dostępny w bibliotece scikit-learn. Zbiór ten zawiera dane dotyczące nieruchomości w Kalifornii, takie jak liczba pokoi, średni dochód mieszkańców oraz odległość od oceanu. Celem modelu jest przewidywanie wartości domu.
+
+Definicja pierwszego zadania – wczytanie danych
+
+```python
+from prefect import task
+import pandas as pd
+
+from sklearn.datasets import fetch_california_housing
+
+@task(retries=3, retry_delay_seconds=[1, 2, 4, 8])
+def load_data():
+
+    data = fetch_california_housing()
+
+    X = pd.DataFrame(
+        data.data,
+        columns=data.feature_names
+    )
+
+    y = data.target
+
+    print("Loaded data shape:", X.shape)
+
+    return X, y
+```
+
+### Zadanie
+
+Zmodyfikuj funkcję `load_data()` tak, aby wyświetlała ładnie sformatowaną liczbę kolumn i pierwsze 5 rekordów.
+
+## Walidacja danych
+
+Walidacja danych jest kluczowym etapem pipeline’u. W praktyce błędy w danych wejściowych mogą prowadzić do niepoprawnych wyników modeli lub przerwania procesu trenowania.
+
+```python
+@task
+def validate_data(X):
+
+    assert X.isnull().sum().sum() == 0
+
+    print("Validation passed")
+
+    return X
+```
+
+### Zadanie
+
+Rozszerz walidację danych tak, aby sprawdzała czy liczba rekordów jest większa niż 1000.
+
+## Podział danych
+
+```python
+from sklearn.model_selection import train_test_split
+
+@task
+def split_data(X, y):
+
+    return train_test_split(
+        X,
+        y,
+        test_size=0.2,
+        random_state=42
+    )
+```
+
+### Zadanie
+
+Dodaj komunikat informujący o rozmiarze zbioru treningowego i zbioru testowego.
+
+## Trenowanie modelu regresyjnego
+
+W tym kroku zostanie wykorzystany model
+
+```python
+import mlflow
+
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error
+
+mlflow.set_experiment(
+    "house_pipeline"
+)
+
+@task
+def train_model(
+    X_train,
+    X_test,
+    y_train,
+    y_test,
+    n_estimators=100
+):
+
+    model = RandomForestRegressor(
+        n_estimators=n_estimators,
+        random_state=42
+    )
+
+    with mlflow.start_run():
+
+        model.fit(
+            X_train,
+            y_train
+        )
+
+        predictions = model.predict(
+            X_test
+        )
+
+        mse = mean_squared_error(
+            y_test,
+            predictions
+        )
+
+        mlflow.log_param(
+            "n_estimators",
+            n_estimators
+        )
+
+        mlflow.log_metric(
+            "mse",
+            mse
+        )
+
+        print("MSE:", mse)
+
+    return model
+```
+
+### Zadanie 
+
+Dodaj drugą metrykę - $R^2$ i ją też zaloguj do MLflow.
+
+## Definicja flow
+
+```python
+from prefect import flow
+
+@flow
+def training_pipeline(
+    n_estimators=100
+):
+
+    X, y = load_data()
+
+    X = validate_data(X)
+
+    X_train, X_test, y_train, y_test = split_data(
+        X,
+        y
+    )
+
+    model = train_model(
+        X_train,
+        X_test,
+        y_train,
+        y_test,
+        n_estimators
+    )
+
+    return model
+```
+
+Uruchom pipeline:
+
+```python
+training_pipeline()
+```
+
+## Parametryzacja pipeline
+
+Jedną z zalet Prefect jest możliwość łatwego uruchamiania pipeline’u z różnymi parametrami.
+
+```python
+training_pipeline(
+    n_estimators=50
+)
+
+training_pipeline(
+    n_estimators=200
+)
+```
+
+### Zadanie
+
+Porównaj wyniki w MLflow - która konfiguracja ma niższe MSE?
+
+## Eksperyment wielokrotny
+
+```python
+for n in [50, 100, 200]:
+
+    training_pipeline(
+        n_estimators=n
+    )
+```
+
+### Zadanie
+
+Dodaj kolejną wartość:
+
+```python
+n_estimators=300
+```
+
+Sprawdź:
+
+* ile eksperymentów pojawiło się w MLflow
+* ile uruchomień Prefect
+
+## Cykliczne uruchamianie pipeline 
+
+W praktyce pipeline trenowania modelu często powinien być uruchamiany cyklicznie. Przykładowo, model predykcyjny może być trenowany raz w tygodniu po aktualizacji danych.
+
+Prefect umożliwia definiowanie harmonogramów uruchamiania pipeline’ów. W tej części utworzony zostanie harmonogram uruchamiający pipeline raz w tygodniu.
+
+```python
+if __name__ == "__main__":
+
+    training_pipeline.serve(
+        name="weekly-training",
+        cron="0 2 * * 1"
+    )
+```
+
+A następnie na serwerze uruchamiamy deployment:
+
+```bash
+python training_pipeline.py
+```
+
+Po uruchomieniu `prefect server start` możemy obserwować ten proces w UI.
+
+### Zadanie
+
+Zmodyfikuj kod pipeline w taki sposób, żeby przeprowadzić kilka eksperymentów z parametrami modelu i zapisać ten najlepszy. W tym celu stwórz @task o nazwie `save_best_model()`. 
+
+## Zalety i wady Prefect
+
+### Zalety
+
+**1. Automatyzacja i orkiestracja pipeline’ów**
+Prefect umożliwia definiowanie złożonych pipeline’ów składających się z wielu kroków, które są wykonywane w określonej kolejności. Pozwala to zastąpić ręczne uruchamianie skryptów zautomatyzowanymi procesami.
+
+**2. Monitorowanie wykonania pipeline’u**
+Prefect udostępnia interfejs użytkownika umożliwiający śledzenie przebiegu flow oraz poszczególnych tasków. Dzięki temu możliwe jest szybkie wykrywanie błędów oraz analiza wydajności pipeline’u.
+
+**3. Obsługa błędów i mechanizmy retry**
+Zadania mogą być automatycznie ponawiane w przypadku błędów. Zwiększa to niezawodność pipeline’ów, szczególnie w sytuacjach, gdy występują problemy z dostępem do danych lub usług zewnętrznych.
+
+**4. Harmonogramowanie wykonywania pipeline’ów**
+Prefect umożliwia uruchamianie pipeline’ów według określonego harmonogramu, np. codziennie lub raz w tygodniu. Pozwala to na automatyczne aktualizowanie modeli oraz danych.
+
+**5. Modularność i czytelna struktura pipeline’u**
+Podział kodu na taski i flow ułatwia organizację projektu oraz zwiększa jego czytelność. Poszczególne etapy przetwarzania danych mogą być łatwo modyfikowane lub ponownie wykorzystywane.
+
+### Wady
+
+**1. Dodatkowy narzut zasobów**
+Prefect wymaga uruchomienia dodatkowych komponentów, takich jak serwer oraz interfejs użytkownika, co zwiększa zużycie pamięci operacyjnej i wydłuża czas startu pipeline’u.
+
+**2. Zwiększona złożoność projektu**
+Wprowadzenie Prefect wymaga dodatkowej konfiguracji oraz znajomości nowych koncepcji, takich jak taski, flow czy deploymenty, co może utrudniać pracę w małych projektach.
+
+**3. Overhead w prostych zastosowaniach**
+W przypadku niewielkich pipeline’ów Prefect może być rozwiązaniem nadmiernie rozbudowanym w stosunku do potrzeb, a prosty skrypt Python może okazać się wystarczający.
+
+**4. Trudniejsze debugowanie w porównaniu do zwykłych skryptów**
+Podział kodu na wiele tasków oraz wykonywanie ich w ramach flow może utrudniać analizę błędów, szczególnie w bardziej złożonych pipeline’ach.
+
+**5. Konieczność utrzymania dodatkowej infrastruktury**
+W środowiskach produkcyjnych Prefect wymaga konfiguracji oraz utrzymania dodatkowych komponentów, takich jak serwer, baza danych czy mechanizmy harmonogramowania.
