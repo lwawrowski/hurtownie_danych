@@ -1,0 +1,424 @@
+# Data Version Control
+
+Na poprzednich zajęciach pipeline trenowania modeli był zarządzany przez Prefect, natomiast wyniki eksperymentów były zapisywane w MLflow. W praktycznych projektach analitycznych istotne jest jednak nie tylko zapisywanie parametrów modeli i metryk, lecz także zarządzanie wersjami danych wejściowych oraz wyników eksperymentów.
+
+W wielu projektach uczenia maszynowego dane są modyfikowane wielokrotnie, a eksperymenty generują duże pliki wynikowe, takie jak predykcje modeli, raporty czy zestawy danych testowych. Standardowy system kontroli wersji, taki jak Git, nie jest przystosowany do przechowywania dużych plików danych. W takich sytuacjach stosuje się narzędzia dedykowane do wersjonowania danych, takie jak DVC.
+
+DVC (Data Version Control) umożliwia śledzenie zmian w zbiorach danych, wynikach eksperymentów oraz modelach. Narzędzie to integruje się z Git, przechowując metadane w repozytorium, a duże pliki danych w zewnętrznych magazynach danych. DVC umożliwia przechowywanie nie tylko kodu, lecz także danych i wyników eksperymentów. Dzięki temu możliwe jest odtworzenie dokładnych wyników uzyskanych w przeszłości oraz analiza zmian zachodzących w danych.
+
+Każdy plik śledzony przez DVC posiada odpowiadający mu plik metadanych z rozszerzeniem `.dvc`, który zawiera informacje o lokalizacji oraz sumie kontrolnej pliku. Dzięki temu możliwe jest odtwarzanie dokładnie tej wersji danych, która była używana w danym eksperymencie.
+
+## Instalacja narzędzia DVC
+
+Zainstaluj DVC:
+
+```bash
+pip install dvc
+```
+
+Sprawdź wersję:
+
+```bash
+dvc version
+```
+
+### Zadanie - przygotowanie projektu
+
+Połącz dotychczasowy projekt z repozyorium git i dvc.
+
+Zainicjalizuj repozytorium Git:
+
+```bash
+git init
+```
+
+Zainicjalizuj DVC:
+
+```bash
+dvc init
+```
+
+Zatwierdź zmiany:
+
+```bash
+git add .
+git commit -m "Initialize DVC"
+```
+
+Utwórz plik `train_model.py`, który będzie uruchamiał trenowanie modelu RF dla podanej liczby drzew np. `train_model(n_estimators)`. Funkcja ma zapisywać predykcje i wartości rzeczywiste dla zbioru testowego w pliku `predictions_{n_estimators}.csv` oraz metryki modelu (liczba drzew, MSE) w pliku `metrics_{n_estimators}.json`. Uruchom skrypt dla `n_estimators=50` i sprawdź, jakie pliki zostały utworzone
+
+## Wersjonowanie wyników eksperymentu
+
+Dodaj plik wynikowy do DVC:
+
+```bash
+dvc add predictions_50.csv
+```
+
+Powstanie plik:
+
+```text
+predictions_50.csv.dvc
+```
+
+Zatwierdź zmiany:
+
+```bash
+git add predictions_50.csv.dvc .gitignore
+git commit -m "Add predictions v1"
+```
+
+### Zadanie
+
+Dodaj również:
+
+```text
+metrics_50.json
+```
+
+do DVC.
+
+## Eksperyment z nową konfiguracją modelu
+
+Zmień:
+
+```python
+train_model(50)
+```
+
+na:
+
+```python
+train_model(200)
+```
+
+Uruchom ponownie:
+
+```bash
+python train_model.py
+```
+
+### Zadanie
+
+Dodaj nowe pliki do DVC:
+
+```text
+predictions_200.csv
+metrics_200.json
+```
+
+Zatwierdź zmiany w Git.
+
+## Porównywanie wersji danych
+
+Sprawdź historię:
+
+```bash
+git log
+```
+
+Przełącz się do wcześniejszej wersji:
+
+```bash
+git checkout HEAD~1
+```
+
+Odtwórz dane:
+
+```bash
+dvc checkout
+```
+
+### Zadanie 
+
+Sprawdź które pliki predykcji są dostępne po wykonaniu `dvc checkout`?
+
+## Pipeline DVC
+
+Komenda `dvc stage add` służy do definiowania konkretnego kroku (etapu) w Twoim potoku przetwarzania danych (pipeline). Dzięki temu DVC wie, w jakiej kolejności uruchamiać skrypty i które pliki od siebie zależą.
+
+Dodaj pipeline:
+
+```bash
+dvc stage add \
+-n train_50 \
+-d train_model.py \
+-o predictions_50.csv \
+python train_model.py
+```
+
+| Flaga / Element | Znaczenie | Wyjaśnienie |
+| :--- | :--- | :--- |
+| **`-n train_50`** | **Name** (Nazwa) | Nadaje etapowi unikalną nazwę w pliku `dvc.yaml`. Tutaj etap nazywa się `train_50`. |
+| **`-d train_model.py`** | **Dependency** (Zależność) | Określa plik, od którego zależy ten etap. Jeśli `train_model.py` zostanie zmodyfikowany, DVC uzna, że ten etap jest nieaktualny i trzeba go uruchomić ponownie przy `dvc repro`. |
+| **`-o predictions_50.csv`** | **Output** (Wynik/Wyjście) | Wskazuje plik, który powstanie w wyniku działania tego etapu. DVC zacznie go śledzić (doda go do `.gitignore` i będzie przechowywać jego wersje w cache). |
+| **`python train_model.py`** | **Command** (Polecenie) | To jest faktyczna komenda systemowa, która ma zostać wykonana. Zawsze znajduje się na samym końcu polecenia `dvc stage add`. |
+
+Kiedy uruchomisz tę komendę, DVC utworzy (lub zaktualizuje) plik **`dvc.yaml`**. Będzie on wyglądał mniej więcej tak:
+
+```yaml
+stages:
+  train_50:
+    cmd: python train_model.py
+    deps:
+    - train_model.py
+    outs:
+    - predictions_50.csv
+```
+
+### Zadanie 
+
+Uruchom pipeline:
+
+```bash
+dvc repro
+```
+
+Sprawdź czy plik wynikowy został odtworzony?
+
+Gdy wpisujesz `dvc repro`, DVC sprawdzi, czy zmienił się kod (`-d`). Jeśli tak, automatycznie uruchomi proces trenowania. Zazwyczaj do zależności dodaje się pliki danych wejściowych np. `-d data/cleaned_data.csv`.
+
+## Eksperymenty z parametrami
+
+Zamiast wpisywać wartości "na sztywno" w kodzie, przenosimy je do pliku konfiguracyjnego. Dzięki temu możesz zmieniać zachowanie modelu bez dotykania ani jednej linii kodu Python.
+
+Utwórz plik `params.yaml`. To standardowy plik, który DVC rozpoznaje automatycznie z zawartością:
+
+```yaml
+n_estimators: 100
+```
+
+Zmodyfikuj kod:
+
+```python
+import yaml
+
+with open("params.yaml") as f:
+    params = yaml.safe_load(f)
+
+n_estimators = params["n_estimators"]
+```
+
+### Zadanie
+
+Zmień parametr:
+
+```yaml
+n_estimators: 300
+```
+
+Uruchom:
+
+```bash
+dvc repro
+```
+
+Sprawdź czy pliki wynikowe zostały zaktualizowane?
+
+## Śledzenie metryk
+
+Metryki to specjalne pliki (zazwyczaj JSON), które DVC traktuje priorytetowo – zamiast śledzić ich zawartość, wyciąga z nich liczby do tabeli.
+
+Dodaj:
+
+```bash
+dvc metrics add metrics_300.json
+```
+
+Wyświetl metryki:
+
+```bash
+dvc metrics show
+```
+
+### Zadanie
+
+Porównaj metryki dla różnych wartości `n_estimators`.
+
+## Eksperymenty DVC
+
+O ile dvc repro służy do odtwarzania "głównego" stanu projektu, o tyle eksperymenty pozwalają Ci na bezpieczne testowanie setek różnych pomysłów bez zaśmiecania historii Gita nowymi commitami czy tworzenia dodatkowych gałęzi.
+
+Uruchom eksperyment:
+
+```bash
+dvc exp run
+```
+
+Kiedy uruchamiasz `dvc exp run`, DVC wykonuje następujące kroki:
+
+1. Odczytuje parametry: Sprawdza plik `params.yaml` (lub inne zdefiniowane parametry).
+2. Uruchamia potok: Wykonuje kroki zdefiniowane w `dvc.yam`l (tak jak `dvc repro`).
+3. Zapisuje wynik w "ukryciu": Zamiast nadpisywać Twoje główne pliki na stałe, DVC zapisuje stan tego konkretnego przebiegu w specjalnych, ukrytych referencjach Gita (nie widzisz ich w zwykłym `git log`).
+4. Kataloguje wyniki: Każdy eksperyment dostaje swoją unikalną nazwę (np. stark-mink) i jest widoczny w tabeli wyników.
+
+Wyświetl eksperymenty:
+
+```bash
+dvc exp show
+```
+
+### Zadanie
+
+Uruchom eksperymenty dla:
+
+```text
+n_estimators = 50
+n_estimators = 100
+n_estimators = 300
+```
+
+Porównaj wartości MSE.
+
+## Przechowywanie plików wynikowych w chmurze
+
+W dotychczasowych ćwiczeniach dane eksperymentów były przechowywane lokalnie. W rzeczywistych systemach analitycznych dane oraz artefakty modeli są zazwyczaj przechowywane w centralnych magazynach danych dostępnych dla wielu użytkowników. 
+
+DVC umożliwia konfigurację zdalnych repozytoriów danych (remote storage), które służą do przechowywania dużych plików poza lokalnym repozytorium. W tym ćwiczeniu zostanie skonfigurowane zdalne repozytorium danych w Azure Data Lake, do którego będą przesyłane wyniki eksperymentów.
+
+Zakłada się, że utworzono:
+
+* Storage Account
+* kontener w Azure Data Lake
+* klucz dostępu (Access Key)
+
+Nazwy przykładowe:
+
+```text
+Storage Account: mlstorage123
+Container: dvc-data
+```
+Zainstaluj rozszerzenie:
+
+```bash
+pip install "dvc[azure]"
+```
+
+Sprawdź:
+
+```bash
+dvc version
+```
+
+Powinna być widoczna obsługa Azure.
+
+## Konfiguracja zdalnego repozytorium DVC
+
+Dodaj zdalne repozytorium:
+
+```bash
+dvc remote add -d azure_remote \
+azure://dvc-data
+```
+
+Parametr `-d` oznacza ustawienie tego repozytorium jako domyślnego.
+
+## Konfiguracja dostępu do Azure
+
+Ustaw parametry:
+
+```bash
+dvc remote modify azure_remote \
+account_name mlstorage123
+```
+
+Dodaj klucz dostępu:
+
+```bash
+dvc remote modify azure_remote \
+account_key YOUR_ACCESS_KEY
+```
+
+W rzeczywistych systemach produkcyjnych zamiast kluczy dostępu stosuje się mechanizmy uwierzytelniania, takie jak Azure Managed Identity.
+
+### Zadanie 
+
+Skonfiguruj zdalne repozytorium Azure Data Lake zgodnie z instrukcją.
+
+Sprawdź konfigurację:
+
+```bash
+dvc remote list
+```
+
+## Przesyłanie danych do Azure Data Lake
+
+Po skonfigurowaniu zdalnego repozytorium można przesłać dane do chmury.
+
+Uruchom:
+
+```bash
+dvc push
+```
+
+Polecenie to:
+
+* przesyła dane do Azure
+* zapisuje je w Data Lake
+* pozostawia metadane w Git
+
+### Zadanie
+
+Po wykonaniu:
+
+```bash
+dvc push
+```
+
+Sprawdź w Azure Portal czy pliki eksperymentów zostały zapisane w kontenerze?
+
+## Pobieranie danych z Azure Data Lake
+
+Jeżeli dane nie są dostępne lokalnie, można je pobrać zdalnie:
+
+```bash
+dvc pull
+```
+
+Polecenie to:
+
+* pobiera dane z Azure
+* odtwarza ich lokalną wersję
+
+### Zadanie
+
+Usuń lokalne pliki:
+
+```bash
+rm predictions_*.csv
+```
+
+Następnie wykonaj:
+
+```bash
+dvc pull
+```
+
+Sprawdź czy pliki zostały odtworzone?
+
+## Wersjonowanie danych w środowisku zespołowym
+
+W projektach zespołowych DVC umożliwia współdzielenie danych między członkami zespołu. Jeden użytkownik może zapisać dane do Azure, a inni użytkownicy mogą je pobrać lokalnie.
+
+Typowy workflow zespołowy wygląda następująco:
+
+```text
+User A:
+train model → dvc push → git push
+
+User B:
+git pull → dvc pull
+```
+
+Takie podejście umożliwia współpracę nad eksperymentami bez konieczności przesyłania dużych plików ręcznie.
+
+W praktycznych systemach analitycznych dane eksperymentów często osiągają bardzo duże rozmiary. Przechowywanie ich lokalnie może być niewystarczające lub niebezpieczne z punktu widzenia dostępności danych.
+
+Azure Data Lake umożliwia:
+
+* skalowalne przechowywanie danych
+* współdzielenie danych w zespołach
+* integrację z narzędziami analitycznymi
+* zabezpieczenie danych przed utratą
+
+Dzięki integracji z DVC możliwe jest tworzenie pipeline’ów analitycznych, które działają zarówno lokalnie, jak i w środowisku chmurowym.

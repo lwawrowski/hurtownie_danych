@@ -444,7 +444,7 @@
     "href": "06-prefect.html#prefect",
     "title": "7  Orkiestracja ETL",
     "section": "",
-    "text": "Wczytanie danych\nWalidacja danych\nPodział danych\nTrenowanie modelu\nZapis metryk w MLflow\n\n\npip install prefect mlflow scikit-learn pandas matplotlib\n\n7.1.1 Zadanie 1\nSprawdź wersję Prefect:\nprefect version\nUruchom również MLflow UI:\nmlflow ui\nOtwórz w przeglądarce:\nhttp://127.0.0.1:5000",
+    "text": "Wczytanie danych\nWalidacja danych\nPodział danych\nTrenowanie modelu\nZapis metryk w MLflow\n\n\npip install prefect mlflow scikit-learn pandas matplotlib\n\n7.1.1 Zadanie 1\nSprawdź wersję Prefect:\nprefect version\nUruchom również MLflow UI:\nmlflow ui\nOtwórz w przeglądarce http://127.0.0.1:5000.",
     "crumbs": [
       "<span class='chapter-number'>7</span>  <span class='chapter-title'>Orkiestracja ETL</span>"
     ]
@@ -494,7 +494,7 @@
     "href": "06-prefect.html#trenowanie-modelu-regresyjnego",
     "title": "7  Orkiestracja ETL",
     "section": "7.6 Trenowanie modelu regresyjnego",
-    "text": "7.6 Trenowanie modelu regresyjnego\nW tym kroku zostanie wykorzystany model\nimport mlflow\n\nfrom sklearn.ensemble import RandomForestRegressor\nfrom sklearn.metrics import mean_squared_error\n\nmlflow.set_experiment(\n    \"house_pipeline\"\n)\n\n@task\ndef train_model(\n    X_train,\n    X_test,\n    y_train,\n    y_test,\n    n_estimators=100\n):\n\n    model = RandomForestRegressor(\n        n_estimators=n_estimators,\n        random_state=42\n    )\n\n    with mlflow.start_run():\n\n        model.fit(\n            X_train,\n            y_train\n        )\n\n        predictions = model.predict(\n            X_test\n        )\n\n        mse = mean_squared_error(\n            y_test,\n            predictions\n        )\n\n        mlflow.log_param(\n            \"n_estimators\",\n            n_estimators\n        )\n\n        mlflow.log_metric(\n            \"mse\",\n            mse\n        )\n\n        print(\"MSE:\", mse)\n\n    return model\n\n7.6.1 Zadanie\nDodaj drugą metrykę - \\(R^2\\) i ją też Zaloguj do MLflow.",
+    "text": "7.6 Trenowanie modelu regresyjnego\nW tym kroku zostanie wykorzystany model\nimport mlflow\n\nfrom sklearn.ensemble import RandomForestRegressor\nfrom sklearn.metrics import mean_squared_error\n\nmlflow.set_experiment(\n    \"house_pipeline\"\n)\n\n@task\ndef train_model(\n    X_train,\n    X_test,\n    y_train,\n    y_test,\n    n_estimators=100\n):\n\n    model = RandomForestRegressor(\n        n_estimators=n_estimators,\n        random_state=42\n    )\n\n    with mlflow.start_run():\n\n        model.fit(\n            X_train,\n            y_train\n        )\n\n        predictions = model.predict(\n            X_test\n        )\n\n        mse = mean_squared_error(\n            y_test,\n            predictions\n        )\n\n        mlflow.log_param(\n            \"n_estimators\",\n            n_estimators\n        )\n\n        mlflow.log_metric(\n            \"mse\",\n            mse\n        )\n\n        print(\"MSE:\", mse)\n\n    return model\n\n7.6.1 Zadanie\nDodaj drugą metrykę - \\(R^2\\) i ją też zaloguj do MLflow.",
     "crumbs": [
       "<span class='chapter-number'>7</span>  <span class='chapter-title'>Orkiestracja ETL</span>"
     ]
@@ -547,6 +547,156 @@
     "text": "7.11 Zalety i wady Prefect\n\n7.11.1 Zalety\n1. Automatyzacja i orkiestracja pipeline’ów Prefect umożliwia definiowanie złożonych pipeline’ów składających się z wielu kroków, które są wykonywane w określonej kolejności. Pozwala to zastąpić ręczne uruchamianie skryptów zautomatyzowanymi procesami.\n2. Monitorowanie wykonania pipeline’u Prefect udostępnia interfejs użytkownika umożliwiający śledzenie przebiegu flow oraz poszczególnych tasków. Dzięki temu możliwe jest szybkie wykrywanie błędów oraz analiza wydajności pipeline’u.\n3. Obsługa błędów i mechanizmy retry Zadania mogą być automatycznie ponawiane w przypadku błędów. Zwiększa to niezawodność pipeline’ów, szczególnie w sytuacjach, gdy występują problemy z dostępem do danych lub usług zewnętrznych.\n4. Harmonogramowanie wykonywania pipeline’ów Prefect umożliwia uruchamianie pipeline’ów według określonego harmonogramu, np. codziennie lub raz w tygodniu. Pozwala to na automatyczne aktualizowanie modeli oraz danych.\n5. Modularność i czytelna struktura pipeline’u Podział kodu na taski i flow ułatwia organizację projektu oraz zwiększa jego czytelność. Poszczególne etapy przetwarzania danych mogą być łatwo modyfikowane lub ponownie wykorzystywane.\n\n\n7.11.2 Wady\n1. Dodatkowy narzut zasobów Prefect wymaga uruchomienia dodatkowych komponentów, takich jak serwer oraz interfejs użytkownika, co zwiększa zużycie pamięci operacyjnej i wydłuża czas startu pipeline’u.\n2. Zwiększona złożoność projektu Wprowadzenie Prefect wymaga dodatkowej konfiguracji oraz znajomości nowych koncepcji, takich jak taski, flow czy deploymenty, co może utrudniać pracę w małych projektach.\n3. Overhead w prostych zastosowaniach W przypadku niewielkich pipeline’ów Prefect może być rozwiązaniem nadmiernie rozbudowanym w stosunku do potrzeb, a prosty skrypt Python może okazać się wystarczający.\n4. Trudniejsze debugowanie w porównaniu do zwykłych skryptów Podział kodu na wiele tasków oraz wykonywanie ich w ramach flow może utrudniać analizę błędów, szczególnie w bardziej złożonych pipeline’ach.\n5. Konieczność utrzymania dodatkowej infrastruktury W środowiskach produkcyjnych Prefect wymaga konfiguracji oraz utrzymania dodatkowych komponentów, takich jak serwer, baza danych czy mechanizmy harmonogramowania.",
     "crumbs": [
       "<span class='chapter-number'>7</span>  <span class='chapter-title'>Orkiestracja ETL</span>"
+    ]
+  },
+  {
+    "objectID": "07-dvc.html",
+    "href": "07-dvc.html",
+    "title": "8  Data Version Control",
+    "section": "",
+    "text": "8.1 Instalacja narzędzia DVC\nNa poprzednich zajęciach pipeline trenowania modeli był zarządzany przez Prefect, natomiast wyniki eksperymentów były zapisywane w MLflow. W praktycznych projektach analitycznych istotne jest jednak nie tylko zapisywanie parametrów modeli i metryk, lecz także zarządzanie wersjami danych wejściowych oraz wyników eksperymentów.\nW wielu projektach uczenia maszynowego dane są modyfikowane wielokrotnie, a eksperymenty generują duże pliki wynikowe, takie jak predykcje modeli, raporty czy zestawy danych testowych. Standardowy system kontroli wersji, taki jak Git, nie jest przystosowany do przechowywania dużych plików danych. W takich sytuacjach stosuje się narzędzia dedykowane do wersjonowania danych, takie jak DVC.\nDVC (Data Version Control) umożliwia śledzenie zmian w zbiorach danych, wynikach eksperymentów oraz modelach. Narzędzie to integruje się z Git, przechowując metadane w repozytorium, a duże pliki danych w zewnętrznych magazynach danych. DVC umożliwia przechowywanie nie tylko kodu, lecz także danych i wyników eksperymentów. Dzięki temu możliwe jest odtworzenie dokładnych wyników uzyskanych w przeszłości oraz analiza zmian zachodzących w danych.\nKażdy plik śledzony przez DVC posiada odpowiadający mu plik metadanych z rozszerzeniem .dvc, który zawiera informacje o lokalizacji oraz sumie kontrolnej pliku. Dzięki temu możliwe jest odtwarzanie dokładnie tej wersji danych, która była używana w danym eksperymencie.\nZainstaluj DVC:\nSprawdź wersję:",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Data Version Control</span>"
+    ]
+  },
+  {
+    "objectID": "07-dvc.html#instalacja-narzędzia-dvc",
+    "href": "07-dvc.html#instalacja-narzędzia-dvc",
+    "title": "8  Data Version Control",
+    "section": "",
+    "text": "pip install dvc\n\ndvc version\n\n8.1.1 Zadanie - przygotowanie projektu\nPołącz dotychczasowy projekt z repozyorium git i dvc.\nZainicjalizuj repozytorium Git:\ngit init\nZainicjalizuj DVC:\ndvc init\nZatwierdź zmiany:\ngit add .\ngit commit -m \"Initialize DVC\"\nUtwórz plik train_model.py, który będzie uruchamiał trenowanie modelu RF dla podanej liczby drzew np. train_model(n_estimators). Funkcja ma zapisywać predykcje i wartości rzeczywiste dla zbioru testowego w pliku predictions_{n_estimators}.csv oraz metryki modelu (liczba drzew, MSE) w pliku metrics_{n_estimators}.json. Uruchom skrypt dla n_estimators=50 i sprawdź, jakie pliki zostały utworzone",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Data Version Control</span>"
+    ]
+  },
+  {
+    "objectID": "07-dvc.html#wersjonowanie-wyników-eksperymentu",
+    "href": "07-dvc.html#wersjonowanie-wyników-eksperymentu",
+    "title": "8  Data Version Control",
+    "section": "8.2 Wersjonowanie wyników eksperymentu",
+    "text": "8.2 Wersjonowanie wyników eksperymentu\nDodaj plik wynikowy do DVC:\ndvc add predictions_50.csv\nPowstanie plik:\npredictions_50.csv.dvc\nZatwierdź zmiany:\ngit add predictions_50.csv.dvc .gitignore\ngit commit -m \"Add predictions v1\"\n\n8.2.1 Zadanie\nDodaj również:\nmetrics_50.json\ndo DVC.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Data Version Control</span>"
+    ]
+  },
+  {
+    "objectID": "07-dvc.html#eksperyment-z-nową-konfiguracją-modelu",
+    "href": "07-dvc.html#eksperyment-z-nową-konfiguracją-modelu",
+    "title": "8  Data Version Control",
+    "section": "8.3 Eksperyment z nową konfiguracją modelu",
+    "text": "8.3 Eksperyment z nową konfiguracją modelu\nZmień:\ntrain_model(50)\nna:\ntrain_model(200)\nUruchom ponownie:\npython train_model.py\n\n8.3.1 Zadanie\nDodaj nowe pliki do DVC:\npredictions_200.csv\nmetrics_200.json\nZatwierdź zmiany w Git.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Data Version Control</span>"
+    ]
+  },
+  {
+    "objectID": "07-dvc.html#porównywanie-wersji-danych",
+    "href": "07-dvc.html#porównywanie-wersji-danych",
+    "title": "8  Data Version Control",
+    "section": "8.4 Porównywanie wersji danych",
+    "text": "8.4 Porównywanie wersji danych\nSprawdź historię:\ngit log\nPrzełącz się do wcześniejszej wersji:\ngit checkout HEAD~1\nOdtwórz dane:\ndvc checkout\n\n8.4.1 Zadanie\nSprawdź które pliki predykcji są dostępne po wykonaniu dvc checkout?",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Data Version Control</span>"
+    ]
+  },
+  {
+    "objectID": "07-dvc.html#pipeline-dvc",
+    "href": "07-dvc.html#pipeline-dvc",
+    "title": "8  Data Version Control",
+    "section": "8.5 Pipeline DVC",
+    "text": "8.5 Pipeline DVC\nKomenda dvc stage add służy do definiowania konkretnego kroku (etapu) w Twoim potoku przetwarzania danych (pipeline). Dzięki temu DVC wie, w jakiej kolejności uruchamiać skrypty i które pliki od siebie zależą.\nDodaj pipeline:\ndvc stage add \\\n-n train_50 \\\n-d train_model.py \\\n-o predictions_50.csv \\\npython train_model.py\n\n\n\n\n\n\n\n\nFlaga / Element\nZnaczenie\nWyjaśnienie\n\n\n\n\n-n train_50\nName (Nazwa)\nNadaje etapowi unikalną nazwę w pliku dvc.yaml. Tutaj etap nazywa się train_50.\n\n\n-d train_model.py\nDependency (Zależność)\nOkreśla plik, od którego zależy ten etap. Jeśli train_model.py zostanie zmodyfikowany, DVC uzna, że ten etap jest nieaktualny i trzeba go uruchomić ponownie przy dvc repro.\n\n\n-o predictions_50.csv\nOutput (Wynik/Wyjście)\nWskazuje plik, który powstanie w wyniku działania tego etapu. DVC zacznie go śledzić (doda go do .gitignore i będzie przechowywać jego wersje w cache).\n\n\npython train_model.py\nCommand (Polecenie)\nTo jest faktyczna komenda systemowa, która ma zostać wykonana. Zawsze znajduje się na samym końcu polecenia dvc stage add.\n\n\n\nKiedy uruchomisz tę komendę, DVC utworzy (lub zaktualizuje) plik dvc.yaml. Będzie on wyglądał mniej więcej tak:\nstages:\n  train_50:\n    cmd: python train_model.py\n    deps:\n    - train_model.py\n    outs:\n    - predictions_50.csv\n\n8.5.1 Zadanie\nUruchom pipeline:\ndvc repro\nSprawdź czy plik wynikowy został odtworzony?\nGdy wpisujesz dvc repro, DVC sprawdzi, czy zmienił się kod (-d). Jeśli tak, automatycznie uruchomi proces trenowania. Zazwyczaj do zależności dodaje się pliki danych wejściowych np. -d data/cleaned_data.csv.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Data Version Control</span>"
+    ]
+  },
+  {
+    "objectID": "07-dvc.html#eksperymenty-z-parametrami",
+    "href": "07-dvc.html#eksperymenty-z-parametrami",
+    "title": "8  Data Version Control",
+    "section": "8.6 Eksperymenty z parametrami",
+    "text": "8.6 Eksperymenty z parametrami\nZamiast wpisywać wartości “na sztywno” w kodzie, przenosimy je do pliku konfiguracyjnego. Dzięki temu możesz zmieniać zachowanie modelu bez dotykania ani jednej linii kodu Python.\nUtwórz plik params.yaml. To standardowy plik, który DVC rozpoznaje automatycznie z zawartością:\nn_estimators: 100\nZmodyfikuj kod:\nimport yaml\n\nwith open(\"params.yaml\") as f:\n    params = yaml.safe_load(f)\n\nn_estimators = params[\"n_estimators\"]\n\n8.6.1 Zadanie\nZmień parametr:\nn_estimators: 300\nUruchom:\ndvc repro\nSprawdź czy pliki wynikowe zostały zaktualizowane?",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Data Version Control</span>"
+    ]
+  },
+  {
+    "objectID": "07-dvc.html#śledzenie-metryk",
+    "href": "07-dvc.html#śledzenie-metryk",
+    "title": "8  Data Version Control",
+    "section": "8.7 Śledzenie metryk",
+    "text": "8.7 Śledzenie metryk\nMetryki to specjalne pliki (zazwyczaj JSON), które DVC traktuje priorytetowo – zamiast śledzić ich zawartość, wyciąga z nich liczby do tabeli.\nDodaj:\ndvc metrics add metrics_300.json\nWyświetl metryki:\ndvc metrics show\n\n8.7.1 Zadanie\nPorównaj metryki dla różnych wartości n_estimators.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Data Version Control</span>"
+    ]
+  },
+  {
+    "objectID": "07-dvc.html#eksperymenty-dvc",
+    "href": "07-dvc.html#eksperymenty-dvc",
+    "title": "8  Data Version Control",
+    "section": "8.8 Eksperymenty DVC",
+    "text": "8.8 Eksperymenty DVC\nO ile dvc repro służy do odtwarzania “głównego” stanu projektu, o tyle eksperymenty pozwalają Ci na bezpieczne testowanie setek różnych pomysłów bez zaśmiecania historii Gita nowymi commitami czy tworzenia dodatkowych gałęzi.\nUruchom eksperyment:\ndvc exp run\nKiedy uruchamiasz dvc exp run, DVC wykonuje następujące kroki:\n\nOdczytuje parametry: Sprawdza plik params.yaml (lub inne zdefiniowane parametry).\nUruchamia potok: Wykonuje kroki zdefiniowane w dvc.yaml (tak jak dvc repro).\nZapisuje wynik w “ukryciu”: Zamiast nadpisywać Twoje główne pliki na stałe, DVC zapisuje stan tego konkretnego przebiegu w specjalnych, ukrytych referencjach Gita (nie widzisz ich w zwykłym git log).\nKataloguje wyniki: Każdy eksperyment dostaje swoją unikalną nazwę (np. stark-mink) i jest widoczny w tabeli wyników.\n\nWyświetl eksperymenty:\ndvc exp show\n\n8.8.1 Zadanie\nUruchom eksperymenty dla:\nn_estimators = 50\nn_estimators = 100\nn_estimators = 300\nPorównaj wartości MSE.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Data Version Control</span>"
+    ]
+  },
+  {
+    "objectID": "07-dvc.html#przechowywanie-plików-wynikowych-w-chmurze",
+    "href": "07-dvc.html#przechowywanie-plików-wynikowych-w-chmurze",
+    "title": "8  Data Version Control",
+    "section": "8.9 Przechowywanie plików wynikowych w chmurze",
+    "text": "8.9 Przechowywanie plików wynikowych w chmurze\nW dotychczasowych ćwiczeniach dane eksperymentów były przechowywane lokalnie. W rzeczywistych systemach analitycznych dane oraz artefakty modeli są zazwyczaj przechowywane w centralnych magazynach danych dostępnych dla wielu użytkowników.\nDVC umożliwia konfigurację zdalnych repozytoriów danych (remote storage), które służą do przechowywania dużych plików poza lokalnym repozytorium. W tym ćwiczeniu zostanie skonfigurowane zdalne repozytorium danych w Azure Data Lake, do którego będą przesyłane wyniki eksperymentów.\nZakłada się, że utworzono:\n\nStorage Account\nkontener w Azure Data Lake\nklucz dostępu (Access Key)\n\nNazwy przykładowe:\nStorage Account: mlstorage123\nContainer: dvc-data\nZainstaluj rozszerzenie:\npip install \"dvc[azure]\"\nSprawdź:\ndvc version\nPowinna być widoczna obsługa Azure.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Data Version Control</span>"
+    ]
+  },
+  {
+    "objectID": "07-dvc.html#konfiguracja-zdalnego-repozytorium-dvc",
+    "href": "07-dvc.html#konfiguracja-zdalnego-repozytorium-dvc",
+    "title": "8  Data Version Control",
+    "section": "8.10 Konfiguracja zdalnego repozytorium DVC",
+    "text": "8.10 Konfiguracja zdalnego repozytorium DVC\nDodaj zdalne repozytorium:\ndvc remote add -d azure_remote \\\nazure://dvc-data\nParametr -d oznacza ustawienie tego repozytorium jako domyślnego.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Data Version Control</span>"
+    ]
+  },
+  {
+    "objectID": "07-dvc.html#konfiguracja-dostępu-do-azure",
+    "href": "07-dvc.html#konfiguracja-dostępu-do-azure",
+    "title": "8  Data Version Control",
+    "section": "8.11 Konfiguracja dostępu do Azure",
+    "text": "8.11 Konfiguracja dostępu do Azure\nUstaw parametry:\ndvc remote modify azure_remote \\\naccount_name mlstorage123\nDodaj klucz dostępu:\ndvc remote modify azure_remote \\\naccount_key YOUR_ACCESS_KEY\nW rzeczywistych systemach produkcyjnych zamiast kluczy dostępu stosuje się mechanizmy uwierzytelniania, takie jak Azure Managed Identity.\n\n8.11.1 Zadanie\nSkonfiguruj zdalne repozytorium Azure Data Lake zgodnie z instrukcją.\nSprawdź konfigurację:\ndvc remote list",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Data Version Control</span>"
+    ]
+  },
+  {
+    "objectID": "07-dvc.html#przesyłanie-danych-do-azure-data-lake",
+    "href": "07-dvc.html#przesyłanie-danych-do-azure-data-lake",
+    "title": "8  Data Version Control",
+    "section": "8.12 Przesyłanie danych do Azure Data Lake",
+    "text": "8.12 Przesyłanie danych do Azure Data Lake\nPo skonfigurowaniu zdalnego repozytorium można przesłać dane do chmury.\nUruchom:\ndvc push\nPolecenie to:\n\nprzesyła dane do Azure\nzapisuje je w Data Lake\npozostawia metadane w Git\n\n\n8.12.1 Zadanie\nPo wykonaniu:\ndvc push\nSprawdź w Azure Portal czy pliki eksperymentów zostały zapisane w kontenerze?",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Data Version Control</span>"
+    ]
+  },
+  {
+    "objectID": "07-dvc.html#pobieranie-danych-z-azure-data-lake",
+    "href": "07-dvc.html#pobieranie-danych-z-azure-data-lake",
+    "title": "8  Data Version Control",
+    "section": "8.13 Pobieranie danych z Azure Data Lake",
+    "text": "8.13 Pobieranie danych z Azure Data Lake\nJeżeli dane nie są dostępne lokalnie, można je pobrać zdalnie:\ndvc pull\nPolecenie to:\n\npobiera dane z Azure\nodtwarza ich lokalną wersję\n\n\n8.13.1 Zadanie\nUsuń lokalne pliki:\nrm predictions_*.csv\nNastępnie wykonaj:\ndvc pull\nSprawdź czy pliki zostały odtworzone?",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Data Version Control</span>"
+    ]
+  },
+  {
+    "objectID": "07-dvc.html#wersjonowanie-danych-w-środowisku-zespołowym",
+    "href": "07-dvc.html#wersjonowanie-danych-w-środowisku-zespołowym",
+    "title": "8  Data Version Control",
+    "section": "8.14 Wersjonowanie danych w środowisku zespołowym",
+    "text": "8.14 Wersjonowanie danych w środowisku zespołowym\nW projektach zespołowych DVC umożliwia współdzielenie danych między członkami zespołu. Jeden użytkownik może zapisać dane do Azure, a inni użytkownicy mogą je pobrać lokalnie.\nTypowy workflow zespołowy wygląda następująco:\nUser A:\ntrain model → dvc push → git push\n\nUser B:\ngit pull → dvc pull\nTakie podejście umożliwia współpracę nad eksperymentami bez konieczności przesyłania dużych plików ręcznie.\nW praktycznych systemach analitycznych dane eksperymentów często osiągają bardzo duże rozmiary. Przechowywanie ich lokalnie może być niewystarczające lub niebezpieczne z punktu widzenia dostępności danych.\nAzure Data Lake umożliwia:\n\nskalowalne przechowywanie danych\nwspółdzielenie danych w zespołach\nintegrację z narzędziami analitycznymi\nzabezpieczenie danych przed utratą\n\nDzięki integracji z DVC możliwe jest tworzenie pipeline’ów analitycznych, które działają zarówno lokalnie, jak i w środowisku chmurowym.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Data Version Control</span>"
     ]
   }
 ]
