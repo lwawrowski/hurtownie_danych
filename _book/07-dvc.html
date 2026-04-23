@@ -351,7 +351,8 @@ metrics_200.json</code></pre>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>-n train_50 <span class="dt">\</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>-d train_model.py <span class="dt">\</span></span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>-o predictions_50.csv <span class="dt">\</span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>python train_model.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>-M metrics_50.json <span class="dt">\</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>python train_model.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -382,6 +383,11 @@ metrics_200.json</code></pre>
 <td style="text-align: left;">Wskazuje plik, który powstanie w wyniku działania tego etapu. DVC zacznie go śledzić (doda go do <code>.gitignore</code> i będzie przechowywać jego wersje w cache).</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;"><strong><code>-M metrics_50.json</code></strong></td>
+<td style="text-align: left;"><strong>Metrics</strong> (Metryki)</td>
+<td style="text-align: left;">Wskazuje plik, który zawiera dane metryk i umożliwia ich dalsze porównywanie.</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;"><strong><code>python train_model.py</code></strong></td>
 <td style="text-align: left;"><strong>Command</strong> (Polecenie)</td>
 <td style="text-align: left;">To jest faktyczna komenda systemowa, która ma zostać wykonana. Zawsze znajduje się na samym końcu polecenia <code>dvc stage add</code>.</td>
@@ -395,7 +401,10 @@ metrics_200.json</code></pre>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">deps</span><span class="kw">:</span></span>
 <span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> train_model.py</span></span>
 <span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">outs</span><span class="kw">:</span></span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> predictions_50.csv</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> predictions_50.csv</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">metrics</span><span class="kw">:</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">metrics_50.json</span><span class="kw">:</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">cache</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <section id="zadanie-3" class="level3" data-number="8.5.1">
 <h3 data-number="8.5.1" class="anchored" data-anchor-id="zadanie-3"><span class="header-section-number">8.5.1</span> Zadanie</h3>
 <p>Uruchom pipeline:</p>
@@ -428,10 +437,10 @@ metrics_200.json</code></pre>
 <section id="śledzenie-metryk" class="level2" data-number="8.7">
 <h2 data-number="8.7" class="anchored" data-anchor-id="śledzenie-metryk"><span class="header-section-number">8.7</span> Śledzenie metryk</h2>
 <p>Metryki to specjalne pliki (zazwyczaj JSON), które DVC traktuje priorytetowo – zamiast śledzić ich zawartość, wyciąga z nich liczby do tabeli.</p>
-<p>Dodaj:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="ex">dvc</span> metrics add metrics_300.json</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Wyświetl metryki:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="ex">dvc</span> metrics show</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="ex">dvc</span> metrics show</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Porównaj wersję lokalną z repozytorium:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="ex">dvc</span> metrics diff</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <section id="zadanie-5" class="level3" data-number="8.7.1">
 <h3 data-number="8.7.1" class="anchored" data-anchor-id="zadanie-5"><span class="header-section-number">8.7.1</span> Zadanie</h3>
 <p>Porównaj metryki dla różnych wartości <code>n_estimators</code>.</p>

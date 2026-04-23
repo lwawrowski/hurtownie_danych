@@ -144,6 +144,7 @@ dvc stage add \
 -n train_50 \
 -d train_model.py \
 -o predictions_50.csv \
+-M metrics_50.json \
 python train_model.py
 ```
 
@@ -152,6 +153,7 @@ python train_model.py
 | **`-n train_50`** | **Name** (Nazwa) | Nadaje etapowi unikalną nazwę w pliku `dvc.yaml`. Tutaj etap nazywa się `train_50`. |
 | **`-d train_model.py`** | **Dependency** (Zależność) | Określa plik, od którego zależy ten etap. Jeśli `train_model.py` zostanie zmodyfikowany, DVC uzna, że ten etap jest nieaktualny i trzeba go uruchomić ponownie przy `dvc repro`. |
 | **`-o predictions_50.csv`** | **Output** (Wynik/Wyjście) | Wskazuje plik, który powstanie w wyniku działania tego etapu. DVC zacznie go śledzić (doda go do `.gitignore` i będzie przechowywać jego wersje w cache). |
+| **`-M metrics_50.json`** | **Metrics** (Metryki) | Wskazuje plik, który zawiera dane metryk i umożliwia ich dalsze porównywanie. |
 | **`python train_model.py`** | **Command** (Polecenie) | To jest faktyczna komenda systemowa, która ma zostać wykonana. Zawsze znajduje się na samym końcu polecenia `dvc stage add`. |
 
 Kiedy uruchomisz tę komendę, DVC utworzy (lub zaktualizuje) plik **`dvc.yaml`**. Będzie on wyglądał mniej więcej tak:
@@ -164,6 +166,9 @@ stages:
     - train_model.py
     outs:
     - predictions_50.csv
+    metrics:
+    - metrics_50.json:
+        cache: false
 ```
 
 ### Zadanie 
@@ -219,16 +224,16 @@ Sprawdź czy pliki wynikowe zostały zaktualizowane?
 
 Metryki to specjalne pliki (zazwyczaj JSON), które DVC traktuje priorytetowo – zamiast śledzić ich zawartość, wyciąga z nich liczby do tabeli.
 
-Dodaj:
-
-```bash
-dvc metrics add metrics_300.json
-```
-
 Wyświetl metryki:
 
 ```bash
 dvc metrics show
+```
+
+Porównaj wersję lokalną z repozytorium:
+
+```bash
+dvc metrics diff
 ```
 
 ### Zadanie
