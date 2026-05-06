@@ -253,7 +253,7 @@ dvc exp run
 Kiedy uruchamiasz `dvc exp run`, DVC wykonuje następujące kroki:
 
 1. Odczytuje parametry: Sprawdza plik `params.yaml` (lub inne zdefiniowane parametry).
-2. Uruchamia potok: Wykonuje kroki zdefiniowane w `dvc.yam`l (tak jak `dvc repro`).
+2. Uruchamia potok: Wykonuje kroki zdefiniowane w `dvc.yaml` (tak jak `dvc repro`).
 3. Zapisuje wynik w "ukryciu": Zamiast nadpisywać Twoje główne pliki na stałe, DVC zapisuje stan tego konkretnego przebiegu w specjalnych, ukrytych referencjach Gita (nie widzisz ich w zwykłym `git log`).
 4. Kataloguje wyniki: Każdy eksperyment dostaje swoją unikalną nazwę (np. stark-mink) i jest widoczny w tabeli wyników.
 

@@ -1,3 +1,517 @@
-# API
+# Serwowanie modelu - API
 
+W poprzednich zajęciach modele uczenia maszynowego były trenowane, wersjonowane oraz zapisywane przy użyciu narzędzi takich jak MLflow, Prefect oraz DVC. Jednak sam zapis modelu nie jest wystarczający, aby umożliwić jego wykorzystanie w rzeczywistych systemach 
+ML.
 
+W praktycznych zastosowaniach modele uczenia maszynowego są udostępniane jako usługi sieciowe, które mogą być wywoływane przez inne systemy. Takie podejście pozwala na integrację modeli z aplikacjami webowymi, systemami raportowymi oraz pipeline’ami analitycznymi.
+
+Jednym z najczęściej stosowanych sposobów udostępniania modeli jest wykorzystanie interfejsu API (Application Programming Interface). W tym ćwiczeniu zostanie utworzona aplikacja API wykorzystująca bibliotekę FastAPI, która umożliwi wykonywanie predykcji przy użyciu wytrenowanego modelu regresyjnego.
+
+Zainstaluj:
+
+```bash
+pip install fastapi uvicorn scikit-learn pandas numpy mlflow
+```
+
+## Przygotowanie modelu
+
+Na potrzeby zajęć wykorzystany zostanie model regresyjny trenowany na zbiorze **California Housing**.
+
+Utwórz plik:
+
+```text
+train_and_save_model.py
+```
+
+W skrypcie pythonowym uwzględnij zapisanie modelu do pliku.
+
+```python
+import pandas as pd
+
+from sklearn.datasets import fetch_california_housing
+from sklearn.model_selection import train_test_split
+
+from sklearn.ensemble import RandomForestRegressor
+
+import joblib
+
+def train_model():
+
+    data = fetch_california_housing()
+
+    X = pd.DataFrame(
+        data.data,
+        columns=data.feature_names
+    )
+
+    y = data.target
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X,
+        y,
+        test_size=0.2,
+        random_state=42
+    )
+
+    model = RandomForestRegressor(
+        n_estimators=100,
+        random_state=42
+    )
+
+    model.fit(
+        X_train,
+        y_train
+    )
+
+    joblib.dump(
+        model,
+        "model.joblib"
+    )
+
+    print("Model zapisany.")
+
+if __name__ == "__main__":
+
+    train_model()
+```
+
+Najczęściej spotykany zapis modelu w Pythonie to użycie pakietów `pickle` lub `joblib`. Powoduje to jednak wystąpienie silnej zależności od wersji bibliotek. Niektóre biblioteki mają własne formaty zapisu np. `xgboost`. MLflow zapisuje modele w standaryzowanym katalogu, który zawiera: właściwy model, metadane, zależności, środowisko uruchomieniowe - to eliminuje większość problemów z kompatybilnością.
+
+## FastAPI
+
+FastAPI jest nowoczesnym frameworkiem do tworzenia interfejsów API w języku Python. Framework ten umożliwia szybkie budowanie wydajnych usług sieciowych, które mogą być wykorzystywane do obsługi modeli uczenia maszynowego.
+
+Jedną z kluczowych zalet FastAPI jest automatyczne generowanie dokumentacji API w formacie OpenAPI. Dokumentacja ta umożliwia interaktywne testowanie endpointów bez konieczności używania dodatkowych narzędzi.
+
+Utwórz plik:
+
+```text
+app.py
+```
+
+i dodaj kod aplikacji API
+
+```python
+import joblib
+import pandas as pd
+
+from fastapi import FastAPI
+
+app = FastAPI()
+
+model = joblib.load(
+    "model.joblib"
+)
+
+@app.get("/")
+def root():
+
+    return {
+        "message": "Model API działa"
+    }
+
+@app.post("/predict")
+def predict(data: dict):
+
+    df = pd.DataFrame(
+        [data]
+    )
+
+    prediction = model.predict(
+        df
+    )
+
+    return {
+        "prediction": prediction.tolist()
+    }
+```
+
+Uruchomienie API
+
+```bash
+uvicorn app:app --reload
+```
+
+Serwer uruchomi się pod adresem:
+
+```text
+http://127.0.0.1:8000
+```
+
+Dokumentacja jest pod adresem:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+Zostanie wyświetlony interaktywny interfejs dokumentacji API - swagger.
+
+### Dekoratory endpointów w FastAPI
+
+Dekoratory w FastAPI określają, jaki typ żądania HTTP jest obsługiwany przez daną funkcję oraz pod jakim adresem URL będzie dostępna.
+
+Najczęściej stosowane dekoratory to:
+
+```python
+@app.get()
+@app.post()
+@app.put()
+@app.delete()
+@app.patch()
+```
+
+Każdy z nich odpowiada określonej operacji HTTP.
+
+#### @app.get — pobieranie danych
+
+Dekorator `@app.get()` służy do definiowania endpointów zwracających dane bez ich modyfikacji. Jest najczęściej stosowany do sprawdzania stanu aplikacji, pobierania konfiguracji lub odczytu wyników.
+
+Przykład:
+
+```python
+@app.get("/health")
+def health_check():
+
+    return {
+        "status": "ok"
+    }
+```
+
+Endpoint ten może być wykorzystywany przez systemy monitorujące do sprawdzania dostępności aplikacji.
+
+*Zadanie*
+
+Dodaj endpoint:
+
+```text
+GET /model-info
+```
+
+który zwraca:
+
+```json
+{
+  "model": "RandomForestRegressor",
+  "version": "1.0"
+}
+```
+
+#### @app.post — tworzenie danych (np. predykcja)
+
+Dekorator `@app.post()` jest najczęściej stosowany do obsługi zapytań zawierających dane wejściowe, które będą przetwarzane przez model.
+
+W przypadku modeli ML endpoint `/predict` jest klasycznym przykładem użycia metody POST.
+
+```python
+@app.post("/predict")
+def predict(data: HousingData):
+
+    df = pd.DataFrame(
+        [data.dict()]
+    )
+
+    prediction = model.predict(df)
+
+    return {
+        "prediction":
+        prediction.tolist()
+    }
+```
+
+#### @app.put — aktualizacja danych
+
+Dekorator `@app.put()` służy do aktualizacji istniejących zasobów.
+
+Może być wykorzystywany np. do:
+
+* aktualizacji konfiguracji modelu
+* zmiany parametrów systemu
+
+#### @app.delete — usuwanie danych
+
+Może służyć np. do:
+
+* usuwania zapisanych predykcji
+* czyszczenia cache
+
+### Parametry w ścieżkach URL
+
+FastAPI umożliwia przekazywanie parametrów bezpośrednio w adresie URL.
+
+Przykład:
+
+```python
+@app.get("/prediction/{prediction_id}")
+def get_prediction(prediction_id: int):
+
+    return {
+        "id": prediction_id
+    }
+```
+
+Zadanie
+
+Dodaj endpoint:
+
+```text
+GET /square/{value}
+```
+
+który zwraca kwadrat liczby.
+
+Parametry mogą być przekazywane również jako query parameters.
+
+Przykład:
+
+```python
+@app.get("/items")
+def get_items(limit: int = 10):
+
+    return {
+        "limit": limit
+    }
+```
+
+Wywołanie:
+
+```text
+/items?limit=5
+```
+
+### Async i Await w FastAPI
+
+Jedną z kluczowych cech FastAPI jest obsługa funkcji asynchronicznych. Mechanizm `async/await` umożliwia efektywne obsługiwanie wielu zapytań jednocześnie, szczególnie gdy operacje wymagają oczekiwania na zasoby zewnętrzne.
+
+Asynchroniczne funkcje są szczególnie przydatne w sytuacjach takich jak:
+
+* odczyt danych z bazy danych
+* komunikacja z API
+* zapis plików
+* operacje sieciowe
+
+*Funkcja synchroniczna*
+
+```python
+@app.get("/sync")
+def sync_example():
+
+    return {
+        "type": "sync"
+    }
+```
+
+Ta funkcja blokuje wykonanie do momentu zakończenia operacji.
+
+*Funkcja asynchroniczna*
+
+```python
+@app.get("/async")
+async def async_example():
+
+    return {
+        "type": "async"
+    }
+```
+
+Dodanie słowa kluczowego `async` oznacza, że funkcja może wykonywać operacje asynchroniczne.
+
+*Funkcja await*
+
+Słowo `await` służy do oczekiwania na zakończenie operacji asynchronicznej.
+
+Przykład:
+
+```python
+import asyncio
+
+@app.get("/wait")
+async def wait_example():
+
+    await asyncio.sleep(2)
+
+    return {
+        "message": "done"
+    }
+```
+
+W tym przypadku aplikacja nie blokuje całego serwera podczas oczekiwania.
+
+Asynchroniczne endpointy mają sens, gdy występują operacje I/O:
+
+- zapytania do bazy danych
+- odczyt plików
+- komunikacja z innym API
+
+Natomiast w przypadku intensywnych obliczeń CPU (np. trenowanie modelu) async zwykle nie przynosi korzyści.
+
+### Lifecycle aplikacji
+
+FastAPI pozwala reagować na zdarzenia uruchamiania i zamykania aplikacji.
+
+*on_event — startup*
+
+```python
+@app.on_event("startup")
+def load_model():
+
+    global model
+
+    model = joblib.load(
+        "model.joblib"
+    )
+```
+
+Model ładowany jest raz podczas uruchomienia serwera.
+
+*on_event — shutdown*
+
+```python
+@app.on_event("shutdown")
+def shutdown_event():
+
+    print("Application stopping...")
+```
+
+## Testowanie API z poziomu kodu
+
+Utwórz plik:
+
+```text
+test_api.py
+```
+
+i dodaj do niego kod:
+
+```python
+import requests
+
+url = "http://127.0.0.1:8000/predict"
+
+data = {
+  "MedInc": 8.3252,
+  "HouseAge": 41.0,
+  "AveRooms": 6.984,
+  "AveBedrms": 1.023,
+  "Population": 322.0,
+  "AveOccup": 2.555,
+  "Latitude": 37.88,
+  "Longitude": -122.23
+}
+
+response = requests.post(
+    url,
+    json=data
+)
+
+print(response.json())
+```
+
+Zadanie
+
+Uruchom:
+
+```bash
+python test_api.py
+```
+
+Sprawdź:
+
+Czy odpowiedź zawiera predykcję.
+
+## Walidacja danych wejściowych (Pydantic)
+
+Dodaj walidację danych.
+
+Zmodyfikuj plik:
+
+```text
+app.py
+```
+
+---
+
+```python
+from pydantic import BaseModel
+
+class HousingData(BaseModel):
+
+    MedInc: float
+    HouseAge: float
+    AveRooms: float
+    AveBedrms: float
+    Population: float
+    AveOccup: float
+    Latitude: float
+    Longitude: float
+
+@app.post("/predict")
+def predict(data: HousingData):
+
+    df = pd.DataFrame(
+        [data.dict()]
+    )
+
+    prediction = model.predict(
+        df
+    )
+
+    return {
+        "prediction": prediction.tolist()
+    }
+```
+
+*Zadanie*
+
+Spróbuj wysłać:
+
+* poprawne dane
+* niepoprawne dane (np. tekst zamiast liczby)
+
+Sprawdź:
+
+Jak API reaguje.
+
+## Logowanie predykcji
+
+Dodaj zapis predykcji do pliku.
+
+```python
+import datetime
+
+@app.post("/predict")
+def predict(data: HousingData):
+
+    df = pd.DataFrame(
+        [data.dict()]
+    )
+
+    prediction = model.predict(
+        df
+    )
+
+    with open(
+        "predictions_log.txt",
+        "a"
+    ) as f:
+
+        f.write(
+            f"{datetime.datetime.now()} "
+            f"{prediction[0]}\n"
+        )
+
+    return {
+        "prediction": prediction.tolist()
+    }
+```
+
+## Ładowanie modelu z MLflow
+
+Jeżeli model został zapisany w MLflow, można go załadować dynamicznie.
+
+```python
+import mlflow.pyfunc
+
+model = mlflow.pyfunc.load_model(
+    "models:/best_house_model/Production"
+)
+```

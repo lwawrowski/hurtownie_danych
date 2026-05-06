@@ -698,5 +698,75 @@
     "crumbs": [
       "<span class='chapter-number'>8</span>  <span class='chapter-title'>Data Version Control</span>"
     ]
+  },
+  {
+    "objectID": "08-api.html",
+    "href": "08-api.html",
+    "title": "9  Serwowanie modelu - API",
+    "section": "",
+    "text": "9.1 Przygotowanie modelu\nW poprzednich zajęciach modele uczenia maszynowego były trenowane, wersjonowane oraz zapisywane przy użyciu narzędzi takich jak MLflow, Prefect oraz DVC. Jednak sam zapis modelu nie jest wystarczający, aby umożliwić jego wykorzystanie w rzeczywistych systemach ML.\nW praktycznych zastosowaniach modele uczenia maszynowego są udostępniane jako usługi sieciowe, które mogą być wywoływane przez inne systemy. Takie podejście pozwala na integrację modeli z aplikacjami webowymi, systemami raportowymi oraz pipeline’ami analitycznymi.\nJednym z najczęściej stosowanych sposobów udostępniania modeli jest wykorzystanie interfejsu API (Application Programming Interface). W tym ćwiczeniu zostanie utworzona aplikacja API wykorzystująca bibliotekę FastAPI, która umożliwi wykonywanie predykcji przy użyciu wytrenowanego modelu regresyjnego.\nZainstaluj:\nNa potrzeby zajęć wykorzystany zostanie model regresyjny trenowany na zbiorze California Housing.\nUtwórz plik:\nW skrypcie pythonowym uwzględnij zapisanie modelu do pliku.\nNajczęściej spotykany zapis modelu w Pythonie to użycie pakietów pickle lub joblib. Powoduje to jednak wystąpienie silnej zależności od wersji bibliotek. Niektóre biblioteki mają własne formaty zapisu np. xgboost. MLflow zapisuje modele w standaryzowanym katalogu, który zawiera: właściwy model, metadane, zależności, środowisko uruchomieniowe - to eliminuje większość problemów z kompatybilnością.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Serwowanie modelu - API</span>"
+    ]
+  },
+  {
+    "objectID": "08-api.html#przygotowanie-modelu",
+    "href": "08-api.html#przygotowanie-modelu",
+    "title": "9  Serwowanie modelu - API",
+    "section": "",
+    "text": "train_and_save_model.py\n\nimport pandas as pd\n\nfrom sklearn.datasets import fetch_california_housing\nfrom sklearn.model_selection import train_test_split\n\nfrom sklearn.ensemble import RandomForestRegressor\n\nimport joblib\n\ndef train_model():\n\n    data = fetch_california_housing()\n\n    X = pd.DataFrame(\n        data.data,\n        columns=data.feature_names\n    )\n\n    y = data.target\n\n    X_train, X_test, y_train, y_test = train_test_split(\n        X,\n        y,\n        test_size=0.2,\n        random_state=42\n    )\n\n    model = RandomForestRegressor(\n        n_estimators=100,\n        random_state=42\n    )\n\n    model.fit(\n        X_train,\n        y_train\n    )\n\n    joblib.dump(\n        model,\n        \"model.joblib\"\n    )\n\n    print(\"Model zapisany.\")\n\nif __name__ == \"__main__\":\n\n    train_model()",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Serwowanie modelu - API</span>"
+    ]
+  },
+  {
+    "objectID": "08-api.html#fastapi",
+    "href": "08-api.html#fastapi",
+    "title": "9  Serwowanie modelu - API",
+    "section": "9.2 FastAPI",
+    "text": "9.2 FastAPI\nFastAPI jest nowoczesnym frameworkiem do tworzenia interfejsów API w języku Python. Framework ten umożliwia szybkie budowanie wydajnych usług sieciowych, które mogą być wykorzystywane do obsługi modeli uczenia maszynowego.\nJedną z kluczowych zalet FastAPI jest automatyczne generowanie dokumentacji API w formacie OpenAPI. Dokumentacja ta umożliwia interaktywne testowanie endpointów bez konieczności używania dodatkowych narzędzi.\nUtwórz plik:\napp.py\ni dodaj kod aplikacji API\nimport joblib\nimport pandas as pd\n\nfrom fastapi import FastAPI\n\napp = FastAPI()\n\nmodel = joblib.load(\n    \"model.joblib\"\n)\n\n@app.get(\"/\")\ndef root():\n\n    return {\n        \"message\": \"Model API działa\"\n    }\n\n@app.post(\"/predict\")\ndef predict(data: dict):\n\n    df = pd.DataFrame(\n        [data]\n    )\n\n    prediction = model.predict(\n        df\n    )\n\n    return {\n        \"prediction\": prediction.tolist()\n    }\nUruchomienie API\nuvicorn app:app --reload\nSerwer uruchomi się pod adresem:\nhttp://127.0.0.1:8000\nDokumentacja jest pod adresem:\nhttp://127.0.0.1:8000/docs\nZostanie wyświetlony interaktywny interfejs dokumentacji API - swagger.\n\n9.2.1 Dekoratory endpointów w FastAPI\nDekoratory w FastAPI określają, jaki typ żądania HTTP jest obsługiwany przez daną funkcję oraz pod jakim adresem URL będzie dostępna.\nNajczęściej stosowane dekoratory to:\n@app.get()\n@app.post()\n@app.put()\n@app.delete()\n@app.patch()\nKażdy z nich odpowiada określonej operacji HTTP.\n\n9.2.1.1 @app.get — pobieranie danych\nDekorator @app.get() służy do definiowania endpointów zwracających dane bez ich modyfikacji. Jest najczęściej stosowany do sprawdzania stanu aplikacji, pobierania konfiguracji lub odczytu wyników.\nPrzykład:\n@app.get(\"/health\")\ndef health_check():\n\n    return {\n        \"status\": \"ok\"\n    }\nEndpoint ten może być wykorzystywany przez systemy monitorujące do sprawdzania dostępności aplikacji.\nZadanie\nDodaj endpoint:\nGET /model-info\nktóry zwraca:\n{\n  \"model\": \"RandomForestRegressor\",\n  \"version\": \"1.0\"\n}\n\n\n9.2.1.2 @app.post — tworzenie danych (np. predykcja)\nDekorator @app.post() jest najczęściej stosowany do obsługi zapytań zawierających dane wejściowe, które będą przetwarzane przez model.\nW przypadku modeli ML endpoint /predict jest klasycznym przykładem użycia metody POST.\n@app.post(\"/predict\")\ndef predict(data: HousingData):\n\n    df = pd.DataFrame(\n        [data.dict()]\n    )\n\n    prediction = model.predict(df)\n\n    return {\n        \"prediction\":\n        prediction.tolist()\n    }\n\n\n9.2.1.3 @app.put — aktualizacja danych\nDekorator @app.put() służy do aktualizacji istniejących zasobów.\nMoże być wykorzystywany np. do:\n\naktualizacji konfiguracji modelu\nzmiany parametrów systemu\n\n\n\n9.2.1.4 @app.delete — usuwanie danych\nMoże służyć np. do:\n\nusuwania zapisanych predykcji\nczyszczenia cache\n\n\n\n\n9.2.2 Parametry w ścieżkach URL\nFastAPI umożliwia przekazywanie parametrów bezpośrednio w adresie URL.\nPrzykład:\n@app.get(\"/prediction/{prediction_id}\")\ndef get_prediction(prediction_id: int):\n\n    return {\n        \"id\": prediction_id\n    }\nZadanie\nDodaj endpoint:\nGET /square/{value}\nktóry zwraca kwadrat liczby.\nParametry mogą być przekazywane również jako query parameters.\nPrzykład:\n@app.get(\"/items\")\ndef get_items(limit: int = 10):\n\n    return {\n        \"limit\": limit\n    }\nWywołanie:\n/items?limit=5\n\n\n9.2.3 Async i Await w FastAPI\nJedną z kluczowych cech FastAPI jest obsługa funkcji asynchronicznych. Mechanizm async/await umożliwia efektywne obsługiwanie wielu zapytań jednocześnie, szczególnie gdy operacje wymagają oczekiwania na zasoby zewnętrzne.\nAsynchroniczne funkcje są szczególnie przydatne w sytuacjach takich jak:\n\nodczyt danych z bazy danych\nkomunikacja z API\nzapis plików\noperacje sieciowe\n\nFunkcja synchroniczna\n@app.get(\"/sync\")\ndef sync_example():\n\n    return {\n        \"type\": \"sync\"\n    }\nTa funkcja blokuje wykonanie do momentu zakończenia operacji.\nFunkcja asynchroniczna\n@app.get(\"/async\")\nasync def async_example():\n\n    return {\n        \"type\": \"async\"\n    }\nDodanie słowa kluczowego async oznacza, że funkcja może wykonywać operacje asynchroniczne.\nFunkcja await\nSłowo await służy do oczekiwania na zakończenie operacji asynchronicznej.\nPrzykład:\nimport asyncio\n\n@app.get(\"/wait\")\nasync def wait_example():\n\n    await asyncio.sleep(2)\n\n    return {\n        \"message\": \"done\"\n    }\nW tym przypadku aplikacja nie blokuje całego serwera podczas oczekiwania.\nAsynchroniczne endpointy mają sens, gdy występują operacje I/O:\n\nzapytania do bazy danych\nodczyt plików\nkomunikacja z innym API\n\nNatomiast w przypadku intensywnych obliczeń CPU (np. trenowanie modelu) async zwykle nie przynosi korzyści.\n\n\n9.2.4 Lifecycle aplikacji\nFastAPI pozwala reagować na zdarzenia uruchamiania i zamykania aplikacji.\non_event — startup\n@app.on_event(\"startup\")\ndef load_model():\n\n    global model\n\n    model = joblib.load(\n        \"model.joblib\"\n    )\nModel ładowany jest raz podczas uruchomienia serwera.\non_event — shutdown\n@app.on_event(\"shutdown\")\ndef shutdown_event():\n\n    print(\"Application stopping...\")",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Serwowanie modelu - API</span>"
+    ]
+  },
+  {
+    "objectID": "08-api.html#testowanie-api-z-poziomu-kodu",
+    "href": "08-api.html#testowanie-api-z-poziomu-kodu",
+    "title": "9  Serwowanie modelu - API",
+    "section": "9.3 Testowanie API z poziomu kodu",
+    "text": "9.3 Testowanie API z poziomu kodu\nUtwórz plik:\ntest_api.py\ni dodaj do niego kod:\nimport requests\n\nurl = \"http://127.0.0.1:8000/predict\"\n\ndata = {\n  \"MedInc\": 8.3252,\n  \"HouseAge\": 41.0,\n  \"AveRooms\": 6.984,\n  \"AveBedrms\": 1.023,\n  \"Population\": 322.0,\n  \"AveOccup\": 2.555,\n  \"Latitude\": 37.88,\n  \"Longitude\": -122.23\n}\n\nresponse = requests.post(\n    url,\n    json=data\n)\n\nprint(response.json())\nZadanie\nUruchom:\npython test_api.py\nSprawdź:\nCzy odpowiedź zawiera predykcję.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Serwowanie modelu - API</span>"
+    ]
+  },
+  {
+    "objectID": "08-api.html#walidacja-danych-wejściowych-pydantic",
+    "href": "08-api.html#walidacja-danych-wejściowych-pydantic",
+    "title": "9  Serwowanie modelu - API",
+    "section": "9.4 Walidacja danych wejściowych (Pydantic)",
+    "text": "9.4 Walidacja danych wejściowych (Pydantic)\nDodaj walidację danych.\nZmodyfikuj plik:\napp.py\n\nfrom pydantic import BaseModel\n\nclass HousingData(BaseModel):\n\n    MedInc: float\n    HouseAge: float\n    AveRooms: float\n    AveBedrms: float\n    Population: float\n    AveOccup: float\n    Latitude: float\n    Longitude: float\n\n@app.post(\"/predict\")\ndef predict(data: HousingData):\n\n    df = pd.DataFrame(\n        [data.dict()]\n    )\n\n    prediction = model.predict(\n        df\n    )\n\n    return {\n        \"prediction\": prediction.tolist()\n    }\nZadanie\nSpróbuj wysłać:\n\npoprawne dane\nniepoprawne dane (np. tekst zamiast liczby)\n\nSprawdź:\nJak API reaguje.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Serwowanie modelu - API</span>"
+    ]
+  },
+  {
+    "objectID": "08-api.html#logowanie-predykcji",
+    "href": "08-api.html#logowanie-predykcji",
+    "title": "9  Serwowanie modelu - API",
+    "section": "9.5 Logowanie predykcji",
+    "text": "9.5 Logowanie predykcji\nDodaj zapis predykcji do pliku.\nimport datetime\n\n@app.post(\"/predict\")\ndef predict(data: HousingData):\n\n    df = pd.DataFrame(\n        [data.dict()]\n    )\n\n    prediction = model.predict(\n        df\n    )\n\n    with open(\n        \"predictions_log.txt\",\n        \"a\"\n    ) as f:\n\n        f.write(\n            f\"{datetime.datetime.now()} \"\n            f\"{prediction[0]}\\n\"\n        )\n\n    return {\n        \"prediction\": prediction.tolist()\n    }",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Serwowanie modelu - API</span>"
+    ]
+  },
+  {
+    "objectID": "08-api.html#ładowanie-modelu-z-mlflow",
+    "href": "08-api.html#ładowanie-modelu-z-mlflow",
+    "title": "9  Serwowanie modelu - API",
+    "section": "9.6 Ładowanie modelu z MLflow",
+    "text": "9.6 Ładowanie modelu z MLflow\nJeżeli model został zapisany w MLflow, można go załadować dynamicznie.\nimport mlflow.pyfunc\n\nmodel = mlflow.pyfunc.load_model(\n    \"models:/best_house_model/Production\"\n)",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Serwowanie modelu - API</span>"
+    ]
   }
 ]
