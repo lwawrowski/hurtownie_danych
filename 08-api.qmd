@@ -179,23 +179,6 @@ def health_check():
 
 Endpoint ten może być wykorzystywany przez systemy monitorujące do sprawdzania dostępności aplikacji.
 
-*Zadanie*
-
-Dodaj endpoint:
-
-```text
-GET /model-info
-```
-
-który zwraca:
-
-```json
-{
-  "model": "RandomForestRegressor",
-  "version": "1.0"
-}
-```
-
 #### @app.post — tworzenie danych (np. predykcja)
 
 Dekorator `@app.post()` jest najczęściej stosowany do obsługi zapytań zawierających dane wejściowe, które będą przetwarzane przez model.
@@ -248,16 +231,6 @@ def get_prediction(prediction_id: int):
         "id": prediction_id
     }
 ```
-
-Zadanie
-
-Dodaj endpoint:
-
-```text
-GET /square/{value}
-```
-
-który zwraca kwadrat liczby.
 
 Parametry mogą być przekazywane również jako query parameters.
 
@@ -372,6 +345,10 @@ def shutdown_event():
     print("Application stopping...")
 ```
 
+#### Zadanie
+
+Dodaj endpointy, które wyświetlą listę atrybutów warunków (features) oraz parametry modelu.
+
 ## Testowanie API z poziomu kodu
 
 Utwórz plik:
@@ -414,9 +391,7 @@ Uruchom:
 python test_api.py
 ```
 
-Sprawdź:
-
-Czy odpowiedź zawiera predykcję.
+Sprawdź czy odpowiedź zawiera predykcję.
 
 ## Walidacja danych wejściowych (Pydantic)
 
@@ -428,7 +403,7 @@ Zmodyfikuj plik:
 app.py
 ```
 
----
+dodając klasę z pakietu `pydantic`
 
 ```python
 from pydantic import BaseModel
@@ -460,16 +435,16 @@ def predict(data: HousingData):
     }
 ```
 
-*Zadanie*
-
 Spróbuj wysłać:
 
 * poprawne dane
 * niepoprawne dane (np. tekst zamiast liczby)
 
-Sprawdź:
+Sprawdź jak API reaguje.
 
-Jak API reaguje.
+### Zadanie
+
+Dodaj do klasy `HousingData` przykładowe wartości z wykorzystaniem `ConfigDict`.
 
 ## Logowanie predykcji
 
@@ -512,6 +487,32 @@ Jeżeli model został zapisany w MLflow, można go załadować dynamicznie.
 import mlflow.pyfunc
 
 model = mlflow.pyfunc.load_model(
-    "models:/best_house_model/Production"
+    "models:/best_house_model/1"
 )
+```
+
+Takie rozwiązanie pozwala uniknąć problemów z różnymi wersjami zapisu modelu.
+
+## Obraz Dockera
+
+Ostatnim krokiem może być udostępnienie usługi predykcji np. przez dockera. Przykładowy plik konfiguracyjny:
+
+```Dockerfile
+FROM python:3.13.5
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the requirements file and install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the application code
+COPY . .
+
+# Expose the port FastAPI runs on
+EXPOSE 8000
+
+# Command to run the application
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
