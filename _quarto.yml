@@ -16,6 +16,7 @@ book:
     - 06-prefect.qmd
     - 07-dvc.qmd
     - 08-api.qmd
+    - 11-monitoring.qmd
     
 format:
   html:

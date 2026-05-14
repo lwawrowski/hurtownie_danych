@@ -778,5 +778,65 @@
     "crumbs": [
       "<span class='chapter-number'>9</span>  <span class='chapter-title'>Serwowanie modelu - API</span>"
     ]
+  },
+  {
+    "objectID": "11-monitoring.html",
+    "href": "11-monitoring.html",
+    "title": "10  Monitoring modeli ML",
+    "section": "",
+    "text": "10.1 Cele monitoringu modeli\nPodczas poprzednich zajęć modele uczenia maszynowego były:\nW praktycznych systemach wdrożenie modelu nie kończy jednak procesu pracy z modelem. Jednym z najważniejszych problemów współczesnych systemów ML jest utrzymanie jakości modelu po wdrożeniu do środowiska produkcyjnego. Model, który osiąga wysoką jakość podczas trenowania, może z czasem zacząć generować coraz gorsze predykcje. Przyczyną tego zjawiska są zmiany zachodzące w danych wejściowych, zachowaniu użytkowników lub środowisku biznesowym. Dlatego nowoczesne systemy ML wymagają monitorowania modeli podobnie jak monitoruje się klasyczne systemy informatyczne.\nModele ML działają na danych pochodzących z rzeczywistego świata. Dane te zmieniają się w czasie, a wraz z nimi zmienia się rozkład cech wejściowych oraz zależności między danymi a zmienną docelową.\nPrzykłady:\nW przeciwieństwie do klasycznego oprogramowania model ML może pogarszać swoje działanie mimo braku zmian w kodzie aplikacji.\nMonitoring modeli ML ma kilka podstawowych celów:",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Monitoring modeli ML</span>"
+    ]
+  },
+  {
+    "objectID": "11-monitoring.html#cele-monitoringu-modeli",
+    "href": "11-monitoring.html#cele-monitoringu-modeli",
+    "title": "10  Monitoring modeli ML",
+    "section": "",
+    "text": "Wykrywanie spadku jakości modelu - system powinien wykrywać sytuacje, w których model zaczyna generować gorsze predykcje.\nWykrywanie zmian w danych wejściowych - zmiana rozkładu danych może oznaczać, że model działa na danych innych niż te używane podczas treningu.\nMonitorowanie wydajności systemu - w środowisku produkcyjnym istotne są również: czas odpowiedzi API, liczba zapytań, zużycie zasobów.",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Monitoring modeli ML</span>"
+    ]
+  },
+  {
+    "objectID": "11-monitoring.html#najważniejsze-problemy-monitorowane-w-ml",
+    "href": "11-monitoring.html#najważniejsze-problemy-monitorowane-w-ml",
+    "title": "10  Monitoring modeli ML",
+    "section": "10.2 Najważniejsze problemy monitorowane w ML",
+    "text": "10.2 Najważniejsze problemy monitorowane w ML\n\n10.2.1 Data Drift\nData drift oznacza zmianę rozkładu danych wejściowych względem danych treningowych.\nPrzykład:\nModel cen mieszkań został wytrenowany na danych sprzed kilku lat. Obecnie średnie ceny mieszkań są znacznie wyższe niż podczas treningu.\n\n\n10.2.2 Concept Drift\nConcept drift oznacza zmianę zależności pomiędzy cechami wejściowymi a zmienną docelową.\nPrzykład:\nRelacja pomiędzy lokalizacją mieszkania a jego ceną może zmieniać się wraz z rozwojem infrastruktury miasta.\n\n\n10.2.3 Prediction Drift\nPrediction drift oznacza zmianę rozkładu samych predykcji modelu.\nPrzykład:\nModel zaczyna przewidywać coraz wyższe ceny dla wszystkich mieszkań.\n\n\n\nhttps://mpechen.win.tue.nl/publications/pubs/Gama_ACMCS_AdaptationCD_accepted.pdf\n\n\n\n\n10.2.4 Metody wykrywania Driftu\nModel ML zakłada, że dane produkcyjne pochodzą z podobnego rozkładu statystycznego jak dane używane podczas treningu. Gdy założenie to przestaje być prawdziwe, jakość modelu może zacząć się pogarszać. W praktyce monitoring driftu sprowadza się do porównywania dwóch zbiorów danych:\n\nzbioru referencyjnego (reference data),\nzbioru aktualnego (current data).\n\nCelem analizy jest odpowiedź na pytanie: czy dane produkcyjne różnią się statystycznie od danych treningowych?\nW praktyce najczęściej stosowane są następujące metody:\n\ntest Kolmogorova–Smirnova - porównanie rozkładów danych referencyjnych i aktualnych.\nWasserstein distance - odległość pomiędzy dwoma rozkładami.\nPopulation Stability Index (PSI) - porównanie odsetka obserwacji w przedziałach danych referencyjnych i aktualnych.\nJensen–Shannon Divergence - mierzy podobieństwo pomiędzy dwoma rozkładami prawdopodobieństwa.\nKullback–Leibler Divergence - mierzy odległości pomiędzy dwoma rozkładami prawdopodobieństwa.\ntest \\(\\chi^2\\) - porównanie częstości dla danych kategorycznych.\n\nW praktyce nie istnieje jeden idealny test - każda metoda ma ograniczenia. W związku z tym do monitoringu modeli zwykle wykorzystuje się kilka metod jednocześnie.\n\n\n10.2.5 Narzędzia\nIstnieje wiele różnych bibliotek do wykrywania zmian w danych i monitoringu modelu:\n\nEvidently\nfrouros\ndeepchecks\n\nPodczas zajęć wykorzystamy Evidently, więc zainstaluj:\npip install evidently scikit-learn pandas matplotlib",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Monitoring modeli ML</span>"
+    ]
+  },
+  {
+    "objectID": "11-monitoring.html#case-study---data-drfit",
+    "href": "11-monitoring.html#case-study---data-drfit",
+    "title": "10  Monitoring modeli ML",
+    "section": "10.3 Case study - data drfit",
+    "text": "10.3 Case study - data drfit\nPodczas laboratorium wykorzystane zostaną dwa zbiory danych.\n\nCalifornia Housing do do regresji cen mieszkań.\nWine Quality do pokazania problemu driftu jakości danych w klasyfikacji.\n\n\n10.3.1 California Housing\nPrzygotowujemy dane\nimport pandas as pd\n\nfrom sklearn.datasets import fetch_california_housing\nfrom sklearn.model_selection import train_test_split\n\ndata = fetch_california_housing()\n\nX = pd.DataFrame(\n    data.data,\n    columns=data.feature_names\n)\n\ny = data.target\n\nX_train, X_ref, y_train, y_ref = train_test_split(\n    X,\n    y,\n    test_size=0.3,\n    random_state=42\n)\nW tym miejscu możemy po raz pierwszy zapoznać się z biblioteką evidently, generując podsumowanie danych:\nfrom evidently import Report\nfrom evidently.metrics import *\nfrom evidently.presets import *\n\nreport = Report([\n    DataSummaryPreset(),\n], include_tests=True)\n\nmy_eval = report.run(X_ref, None)\n\nmy_eval.save_html(\n    \"housing_summary_report.html\"\n)\nNastępnie trenujemy model\nfrom sklearn.ensemble import RandomForestRegressor\nfrom sklearn.metrics import mean_absolute_error\n\nmodel = RandomForestRegressor(\n    random_state=42\n)\n\nmodel.fit(\n    X_train,\n    y_train\n)\n\nreference_predictions = model.predict(\n    X_ref\n)\n\nprint(mean_absolute_error(\n    y_ref, reference_predictions))\nW kolejnym kroku Wprowadzimy sztuczny drift. W celu symulacji problemu produkcyjnego, zmodyfikujemy dane wejściowe.\nX_drifted = X_ref.copy()\n\nX_drifted[\"MedInc\"] *= 2\nX_drifted[\"AveRooms\"] *= 1.5\n\n10.3.1.1 Zadanie\nZa pomocą funkcji describe() porównaj rozkłady obu zbiorów. Czy jest widoczna różnica?\n\n\n\n10.3.2 Generowanie raportu driftu\nreport = Report([\n    DataDriftPreset()\n])\n\nmy_report = report.run(\n    reference_data=X_ref,\n    current_data=X_drifted\n)\n\nmy_report.save_html(\n    \"housing_drift_report.html\"\n)\nNa stronie https://docs.evidentlyai.com/metrics/customize_data_drift dostęne są informacje na temat dodatkowych opcji klasy Report.\n\n\n10.3.3 Wine Quality\nSprawdzimy jak będzie to wyglądało dla problemu klasyfikacji.\nfrom sklearn.datasets import load_wine\n\nwine_data = load_wine(as_frame=True)\n\nX_wine = wine_data.data\ny_wine = wine_data.target\n\n10.3.3.1 Zadanie\nWygeneruj drift danych X_wine_drifted[\"alcohol\"] *= 1.8 i wygeneruj raport. Jakie elementy się zmieniły najbardziej?",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Monitoring modeli ML</span>"
+    ]
+  },
+  {
+    "objectID": "11-monitoring.html#case-study---prediction-drift",
+    "href": "11-monitoring.html#case-study---prediction-drift",
+    "title": "10  Monitoring modeli ML",
+    "section": "10.4 Case study - prediction drift",
+    "text": "10.4 Case study - prediction drift\nO ile do wykrywania data driftu wystarczyło podać zbiory danych, tak w przypadku analizy predykcji musimy przygotować obiekt odpowiedniej klasy.\nfrom evidently import Dataset, Regression, DataDefinition\n\ndrifted_predictions = model.predict(\n    X_drifted\n)\n\nreg_definition = DataDefinition(\n    regression=[Regression(target=\"y_true\", prediction=\"y_pred\")]\n    )\n\nref_df = X_ref.copy()\nref_df[\"y_true\"] = y_ref\nref_df[\"y_pred\"] = reference_predictions\n\nref_data = Dataset.from_pandas(\n    ref_df,\n    data_definition=reg_definition\n)\n\ndrifted_df = X_drifted.copy()\ndrifted_df[\"y_true\"] = y_ref\ndrifted_df[\"y_pred\"] = drifted_predictions\n\ndrifted_data = Dataset.from_pandas(\n    drifted_df,\n    data_definition=reg_definition\n)\nA następnie wygenerować odpowiedni raport.\nreport = Report([\n    RegressionPreset()\n], include_tests=True)\n\nmy_report = report.run(\n    current_data=drifted_data, reference_data=ref_data\n)\n\nmy_report.save_html(\n    \"prediction_drift_report.html\"\n)\nW środowisku produkcyjnym raporty HTML generowane przez Evidently będą zwykle niewystarczające. Są bardzo dobre do analizy eksperymentalnej i debugowania, ale w realnych systemach monitoring powinien działać automatycznie i zwracać ustrukturyzowane informacje, które mogą zostać wykorzystane przez pipeline’y retrainingu czy systemy observability. Każdy wygenerowany raport można przekonwertować do słownika i na tej podstawie napisać funkcje, które będą ekstrachowały odpowiednie informacje i przekazywały np. przez API. Przykładowy wynik działania takiej funkcji może być następujący:\n{\n    \"drift\": {\n        \"drift_detected\": True,\n        \"drift_share\": 0.75\n    },\n    \"quality\": {\n        \"mse\": 1.84,\n        \"quality_degraded\": True\n    }\n}\nNa tej podstawie mogą być zdefiniowane określone alerty lub automatyczny retrening modelu. Zawsze jednak należy zwrócić także uwagę na aspekty biznesowe modelu.\n\n10.4.0.1 Zadanie\nPrzygotuj raport prediction drift dla zadania klasyfikacji. Spróbuj zmodyfikować dane tak, aby model zaczął przewidywać niemal wyłącznie jedną klasę.",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Monitoring modeli ML</span>"
+    ]
+  },
+  {
+    "objectID": "11-monitoring.html#podsumowanie",
+    "href": "11-monitoring.html#podsumowanie",
+    "title": "10  Monitoring modeli ML",
+    "section": "10.5 Podsumowanie",
+    "text": "10.5 Podsumowanie\nMonitoring modeli ML jest jednym z najważniejszych elementów współczesnych systemów MLOps, ponieważ jakość modeli może pogarszać się w czasie mimo braku zmian w kodzie aplikacji. Przyczyną są zmiany danych wejściowych oraz zmieniające się zależności biznesowe. W praktyce monitorowane są trzy główne zjawiska: data drift, prediction drift oraz concept drift.\nMonitoring modeli ma jednak znaczenie nie tylko dla utrzymania jakości predykcji, ale również dla bezpieczeństwa systemów sztucznej inteligencji. Coraz większym problemem są adversarial attacks, czyli celowe manipulowanie danymi wejściowymi w taki sposób, aby model generował błędne predykcje. Ataki tego typu szczególnie często dotyczą modeli deep learning oraz danych wysokowymiarowych, takich jak obrazy, tekst, dźwięk czy embeddingi modeli językowych. Niewielkie, często niezauważalne dla człowieka zmiany danych mogą prowadzić do całkowicie błędnych decyzji modelu.\nProblemy te mają największe znaczenie w systemach krytycznych, takich jak autonomiczne pojazdy, biometria, systemy bezpieczeństwa, analiza medyczna czy wykrywanie fraudów finansowych. W takich zastosowaniach monitoring driftu i predykcji może pełnić rolę mechanizmu wczesnego ostrzegania przed próbami manipulacji systemem ML. Z tego powodu nowoczesny monitoring modeli coraz częściej łączy analizę jakości modeli, wykrywanie driftu oraz mechanizmy cyberbezpieczeństwa w ramach jednego ekosystemu MLOps.",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Monitoring modeli ML</span>"
+    ]
   }
 ]
